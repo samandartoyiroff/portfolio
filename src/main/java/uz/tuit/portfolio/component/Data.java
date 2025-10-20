@@ -3053,6 +3053,7 @@ public class Data {
             "Team leadership",
             "Integrity",
             "Self-discipline",
+
             "Dependability",
             "Relationship building",
             "Cross-cultural communication",
