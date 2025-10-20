@@ -1,0 +1,37 @@
+server:
+  port: 9090
+  address: 0.0.0.0
+
+spring:
+  datasource:
+    url: jdbc:postgresql://15.206.79.66/portfolio
+    username: postgres
+    password: root123
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    open-in-view: false
+  servlet:
+    multipart:
+      max-file-size: 15MB
+      enabled: true
+      max-request-size: 15MB
+
+json:
+  web:
+    token:
+      cookie-name: portfolio-jwt
+      refresh-cookie-name: portfolio-refresh
+      secret: 1234567891011131123456789101113112345678910111311234567891011131
+      validation-time: 28800000
+      refresh-time: 57600000
+
+file:
+  upload:
+    directory:
+      image: uploads/images/
+      file: uploads/files/
+      static: uploads/static/
+    size: 63000000
+

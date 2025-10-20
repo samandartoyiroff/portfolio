@@ -1,0 +1,47 @@
+package uz.tuit.portfolio.model;
+
+public enum Permission {
+
+    // Admin
+    ADMIN_READ,
+    ADMIN_UPDATE,
+    ADMIN_DELETE,
+    ADMIN_CREATE,
+
+    // CV
+    CV_CREATE,
+    CV_UPDATE,
+    CV_DELETE,
+    CV_READ,
+
+    // Soft Skill
+    SOFT_SKILL_CREATE,
+    SOFT_SKILL_UPDATE,
+    SOFT_SKILL_DELETE,
+    SOFT_SKILL_READ,
+
+    // Hard Skill
+    HARD_SKILL_CREATE,
+    HARD_SKILL_UPDATE,
+    HARD_SKILL_DELETE,
+    HARD_SKILL_READ,
+
+    // Technology
+    TECHNOLOGY_CREATE,
+    TECHNOLOGY_UPDATE,
+    TECHNOLOGY_DELETE,
+    TECHNOLOGY_READ,
+
+    // Feedback
+    FEEDBACK_CREATE,
+    FEEDBACK_UPDATE,
+    FEEDBACK_DELETE,
+    FEEDBACK_READ,
+
+    // Subscription
+    SUBSCRIPTION_CREATE,
+    SUBSCRIPTION_UPDATE,
+    SUBSCRIPTION_DELETE,
+    SUBSCRIPTION_READ
+
+}
