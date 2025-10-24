@@ -25,5 +25,9 @@ public class Project extends Auditable {
     @ToString.Exclude
     private CV cv;
 
+    @ManyToOne
+    @JoinColumn(name = "portfolio_id")
+    private Portfolio portfolio;
+
 
 }

@@ -19,6 +19,8 @@ public class EducationResponseDto {
 
     private String name;
 
+    private String description;
+
     @JsonFormat(pattern = "yyyy/MM/dd")
     private LocalDate startDate;
 

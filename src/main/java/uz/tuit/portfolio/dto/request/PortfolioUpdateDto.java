@@ -1,20 +1,16 @@
 package uz.tuit.portfolio.dto.request;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
 import lombok.*;
 import uz.tuit.portfolio.domain.Address;
 import uz.tuit.portfolio.domain.ContactInfo;
 import uz.tuit.portfolio.model.Gender;
-
-import java.util.List;
 
 @Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class CVUpdateDto {
+public class PortfolioUpdateDto {
 
     private String fullName;
 

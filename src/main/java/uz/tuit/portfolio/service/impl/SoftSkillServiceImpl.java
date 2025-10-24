@@ -1,5 +1,6 @@
 package uz.tuit.portfolio.service.impl;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import uz.tuit.portfolio.domain.CV;
+import uz.tuit.portfolio.domain.Portfolio;
 import uz.tuit.portfolio.domain.SoftSkill;
 import uz.tuit.portfolio.domain.User;
 import uz.tuit.portfolio.dto.request.SoftSkillCreateDto;
@@ -18,12 +20,12 @@ import uz.tuit.portfolio.dto.request.SoftSkillUpdateDto;
 import uz.tuit.portfolio.dto.response.SoftSkillResponseDto;
 import uz.tuit.portfolio.mapper.SoftSkillMapper;
 import uz.tuit.portfolio.repository.CVRepository;
+import uz.tuit.portfolio.repository.PortfolioRepository;
 import uz.tuit.portfolio.repository.SoftSkillRepository;
 import uz.tuit.portfolio.repository.UserRepository;
 import uz.tuit.portfolio.service.SoftSkillService;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -34,6 +36,7 @@ public class SoftSkillServiceImpl implements SoftSkillService {
     private final SoftSkillMapper softSkillMapper;
     private final CVRepository cVRepository;
     private final UserRepository userRepository;
+    private final PortfolioRepository portfolioRepository;
 
     @Override
     public ResponseEntity<?> search(String query) {
@@ -46,6 +49,7 @@ public class SoftSkillServiceImpl implements SoftSkillService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<?> create(SoftSkillCreateDto softSkillCreateDto) {
 
         SoftSkill softSkill = new SoftSkill();
@@ -88,12 +92,13 @@ public class SoftSkillServiceImpl implements SoftSkillService {
 
     @Override
     @Transactional
-    public ResponseEntity<SoftSkillResponseDto> addSoftSkill(User user, Long softSkillId) {
+    public ResponseEntity<SoftSkillResponseDto> addSoftSkill(User user, Long softSkillId, Long cvId) {
 
         SoftSkill softSkill = softSkillRepository.findById(softSkillId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
-        CV cv = user.getCv();
+        CV cv = cVRepository.findByIdAndUserId(cvId, user.getId()).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+
         cv.getSoftSkills().add(softSkill);
         cVRepository.save(cv);
 
@@ -103,15 +108,37 @@ public class SoftSkillServiceImpl implements SoftSkillService {
 
     @Override
     @Transactional
-    public ResponseEntity<?> removeSoftSkill(Long id, User user) {
+    public ResponseEntity<?> removeSoftSkill(Long id, User user, Long cvId) {
 
-        Long id1 = user.getCv().getId();
+        CV cv = cVRepository.findByIdAndUserId(cvId, user.getId()).orElseThrow(()-> new EntityNotFoundException("cv not found"));
 
-        System.out.println("CV Id: " + id1);
-        System.out.println("Soft Skill Id: " + id);
+        softSkillRepository.deleteBySoftSkillIdAndCvId(id, cv.getId());
 
-        softSkillRepository.deleteBySoftSkillIdAndCvId(id, id1);
         return ResponseEntity.ok().build();
 
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<SoftSkillResponseDto> addSoftSkillToPortfolio(User user, Long softSkillId) {
+        SoftSkill softSkill = softSkillRepository.findById(softSkillId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        Portfolio portfolio = user.getPortfolio();
+
+        portfolio.getSoftSkills().add(softSkill);
+        portfolioRepository.save(portfolio);
+
+        return ResponseEntity.ok(softSkillMapper.toResponseDto(softSkill));
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<?> removeSoftSkillFromPortfolio(Long id, User user) {
+
+        Portfolio portfolio = user.getPortfolio();
+        softSkillRepository.deleteBySoftSkillIdAndPortfolioId(id, portfolio.getId());
+
+        return ResponseEntity.ok().build();
     }
 }

@@ -1,5 +1,6 @@
 package uz.tuit.portfolio.service.impl;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +14,6 @@ import uz.tuit.portfolio.dto.request.CVUpdateDto;
 import uz.tuit.portfolio.dto.response.CVResponseDto;
 import uz.tuit.portfolio.mapper.CVMapper;
 import uz.tuit.portfolio.repository.CVRepository;
-import uz.tuit.portfolio.repository.UserRepository;
 import uz.tuit.portfolio.service.CVService;
 import uz.tuit.portfolio.service.ImageService;
 
@@ -25,7 +25,6 @@ import java.util.List;
 public class CVServiceImpl implements CVService {
 
     private final CVMapper cVMapper;
-    private final UserRepository userRepository;
     private final CVRepository cVRepository;
     private final ImageService imageService;
 
@@ -35,9 +34,9 @@ public class CVServiceImpl implements CVService {
 
         CV cv = cVMapper.toEntity(cvCreateDto, cvImage);
 
-        user.setCv(cv);
+        cv.setUser(user);
 
-        userRepository.save(user);
+        cVRepository.save(cv);
 
         return ResponseEntity.ok().body(cVMapper.toResponseDto(cv, user));
 
@@ -45,20 +44,20 @@ public class CVServiceImpl implements CVService {
     }
 
     @Override
-    public ResponseEntity<CVResponseDto> getMyCv(User user) {
+    public ResponseEntity<List<CVResponseDto>> getMyAllCv(User user) {
 
-        CV cv = user.getCv();
-        CVResponseDto cvResponseDto = cVMapper.toResponseDto(cv, user);
-        return ResponseEntity.ok(cvResponseDto);
+        List<CV> cvs = cVRepository.findByUser(user);
+        List<CVResponseDto> cvResponseDtos = cVMapper.toListResponseDto(cvs, user);
+        return ResponseEntity.ok(cvResponseDtos);
 
     }
 
     @Override
     @Transactional
-    public ResponseEntity<?> update(CVUpdateDto cvUpdateDto, User user, MultipartFile profilePhoto) {
+    public ResponseEntity<?> update(CVUpdateDto cvUpdateDto, User user, MultipartFile profilePhoto, Long cvId) {
 
 
-        CV cv = user.getCv();
+        CV cv = cVRepository.findById(cvId).orElseThrow(() -> new RuntimeException("CV Not Found"));
 
         if (profilePhoto!=null) {
             Image image = imageService.updateImage(profilePhoto, cv.getCvPhoto());
@@ -75,27 +74,21 @@ public class CVServiceImpl implements CVService {
 
     @Override
     @Transactional
-    public ResponseEntity<?> removeHobby(String hobby, User user) {
+    public ResponseEntity<?> removeHobby(String hobby, User user, Long cvId) {
 
-        CV cv = user.getCv();
+        CV cv = cVRepository.findByIdAndUserId(cvId, user.getId()).orElseThrow(()-> new EntityNotFoundException("cv not found"));
 
-        List<String> hobbies = cv.getHobbies();
+        cVRepository.removeHobby(cv.getId(), hobby);
 
-        List<String> newHobbies = hobbies.stream().filter(h->!h.equals(hobby)).toList();
-
-        cv.setHobbies(newHobbies);
-
-        cVRepository.save(cv);
-
-        return ResponseEntity.ok().body(cVMapper.toResponseDto(cv, user));
+        return ResponseEntity.ok("Removed hobby");
 
     }
 
     @Override
     @Transactional
-    public ResponseEntity<?> addHobby(String hobby, User user) {
+    public ResponseEntity<?> addHobby(String hobby, User user, Long cvId) {
 
-        CV cv = user.getCv();
+        CV cv = cVRepository.findByIdAndUserId(cvId, user.getId()).orElseThrow(()-> new EntityNotFoundException("cv not found"));
 
         if (cv.getHobbies() == null) {
             cv.setHobbies(new ArrayList<>());

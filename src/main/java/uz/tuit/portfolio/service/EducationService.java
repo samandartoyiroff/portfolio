@@ -9,10 +9,15 @@ import uz.tuit.portfolio.dto.request.EducationUpdateDto;
 import uz.tuit.portfolio.dto.response.EducationResponseDto;
 
 public interface EducationService {
-    ResponseEntity<EducationResponseDto> addEducation(User user, @Valid EducationCreateDto educationCreateDto, MultipartFile educationFile);
+    ResponseEntity<EducationResponseDto> addEducation(User user, @Valid EducationCreateDto educationCreateDto, MultipartFile educationFile, Long cvId);
 
-    ResponseEntity<EducationResponseDto> update(EducationUpdateDto educationUpdateDto, Long id, User user, MultipartFile educationFile);
+    ResponseEntity<EducationResponseDto> update(EducationUpdateDto educationUpdateDto, Long id, User user, MultipartFile educationFile, Long cvId);
 
-    ResponseEntity<?> removeEducation(Long id, User user);
+    ResponseEntity<?> removeEducation(Long id, User user, Long cvId);
 
+    ResponseEntity<EducationResponseDto> addEducationToPortfolio(User user, @Valid EducationCreateDto educationCreateDto, MultipartFile educationFile);
+
+    ResponseEntity<EducationResponseDto> updateInPortfolio(EducationUpdateDto educationUpdateDto, Long id, User user, MultipartFile educationFile);
+
+    ResponseEntity<?> removeEducationFromPortfolio(Long id, User user);
 }

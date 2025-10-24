@@ -11,6 +11,8 @@ import uz.tuit.portfolio.dto.request.*;
 import uz.tuit.portfolio.dto.response.*;
 import uz.tuit.portfolio.service.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/cv")
 @RequiredArgsConstructor
@@ -39,237 +41,258 @@ public class CVController {
         return cvService.createCV(cvCreateDto, cvImage, user);
     }
 
-    @GetMapping("/myCV")
-    public ResponseEntity<CVResponseDto> getCV(
+    @GetMapping("/myCVs")
+    public ResponseEntity<List<CVResponseDto>> getAllCV(
             @AuthenticationPrincipal User user
             ){
-        return cvService.getMyCv(user);
+        return cvService.getMyAllCv(user);
     }
 
-    @PostMapping("/update")
+    @PostMapping("/update/{cvId}")
     public ResponseEntity<?> updateProject(
             @RequestPart CVUpdateDto cvUpdateDto,
-            @RequestPart(required = false) MultipartFile profilePhoto,
-            @AuthenticationPrincipal User user
-    ){
-        return cvService.update(cvUpdateDto, user, profilePhoto);
+            @AuthenticationPrincipal User user,
+            @PathVariable Long cvId,
+            @RequestPart(name = "cvImage", required = false) MultipartFile cvImage
+
+            ){
+        return cvService.update(cvUpdateDto, user,cvImage, cvId);
     }
 
     // Experience
 
-    @PostMapping("/experience/add")
+    @PostMapping("/experience/add/{cvId}")
     public ResponseEntity<ExperienceResponseDto> toResponseDto(
             @RequestBody ExperienceCreateDto experienceCreateDto,
-            @AuthenticationPrincipal User user
+            @AuthenticationPrincipal User user,
+            @PathVariable Long cvId
     ) {
-        return experienceService.addExperience(experienceCreateDto, user);
+        return experienceService.addExperience(experienceCreateDto, user, cvId);
     }
 
-    @PostMapping("/experience/update/{id}")
+    @PostMapping("/experience/update/{cvId}/{id}")
     public ResponseEntity<ExperienceResponseDto> updateExperience(
             @PathVariable(name = "id") Long id,
-            @RequestBody ExperienceUpdateDto experienceUpdateDto
-    ){
-        return experienceService.updateExperience(id, experienceUpdateDto);
-    }
-
-    @PostMapping("/experience/delete/{id}")
-    public ResponseEntity<?> deleteExperience(
-            @PathVariable(name = "id") Long id,
+            @RequestBody ExperienceUpdateDto experienceUpdateDto,
+            @PathVariable Long cvId,
             @AuthenticationPrincipal User user
     ){
-        return experienceService.delete(id, user);
+        return experienceService.updateExperience(id, experienceUpdateDto, cvId, user);
+    }
+
+    @PostMapping("/experience/delete/{cvId}/{id}")
+    public ResponseEntity<?> deleteExperience(
+            @PathVariable(name = "id") Long id,
+            @AuthenticationPrincipal User user,
+            @PathVariable Long cvId
+    ){
+        return experienceService.delete(id, user, cvId);
     }
 
     //Hard Skill
 
-    @PostMapping("/hard-skill/add")
+    @PostMapping("/hard-skill/add/{cvId}")
     public ResponseEntity<HardSkillResponseDto> addHardSkill(
             @AuthenticationPrincipal User user,
-            @RequestParam(name = "hardSkillId")  Long hardSkillId
+            @RequestParam(name = "hardSkillId")  Long hardSkillId,
+            @PathVariable Long cvId
 
     ){
-        return hardSkillService.addHardSkill(hardSkillId, user);
+        return hardSkillService.addHardSkill(hardSkillId, user, cvId);
     }
 
-    @PostMapping("/hard-skill/remove/{id}")
+    @PostMapping("/hard-skill/remove/{cvId}/{id}")
     public ResponseEntity<?> removeHardSkill(
             @AuthenticationPrincipal User user,
-            @RequestParam(name = "id")  Long id
+            @RequestParam(name = "id")  Long id,
+            @PathVariable Long cvId
     ){
-        return hardSkillService.removeHardSkill(user, id);
+        return hardSkillService.removeHardSkill(user, id, cvId);
     }
 
     //Soft Skill
 
-    @PostMapping("/soft-skill/add")
+    @PostMapping("/soft-skill/add/{cvId}")
     public ResponseEntity<SoftSkillResponseDto> addSoftSkill(
             @AuthenticationPrincipal User user,
-            @RequestParam(name = "softSkillId") Long softSkillId
+            @RequestParam(name = "softSkillId") Long softSkillId,
+            @PathVariable Long cvId
     ){
-        return softSkillService.addSoftSkill(user, softSkillId);
+        return softSkillService.addSoftSkill(user, softSkillId, cvId);
     }
 
-    @PostMapping("/soft-skill/remove/{id}")
+    @PostMapping("/soft-skill/remove/{cvId}/{id}")
     public ResponseEntity<?> removeSoftSkill(
             @PathVariable(name = "id") Long id,
-            @AuthenticationPrincipal User user
+            @AuthenticationPrincipal User user,
+            @PathVariable Long cvId
     ){
-        return softSkillService.removeSoftSkill(id, user);
+        return softSkillService.removeSoftSkill(id, user,cvId);
     }
 
     // Education
 
-    @PostMapping("/education/add")
+    @PostMapping("/education/add/{cvId}")
     public ResponseEntity<EducationResponseDto> addEducation(
 
-            @RequestPart @Valid EducationCreateDto educationCreateDto,
+            @RequestBody @Valid EducationCreateDto educationCreateDto,
             @AuthenticationPrincipal User user,
-            @RequestPart(required = false) MultipartFile educationFile
+            @PathVariable Long cvId
 
     ){
-        return educationService.addEducation(user, educationCreateDto, educationFile);
+        return educationService.addEducation(user, educationCreateDto, null, cvId);
     }
 
-    @PostMapping("/education/update/{id}")
+    @PostMapping("/education/update/{cvId}/{id}")
     public ResponseEntity<EducationResponseDto> updateEducation(
             @PathVariable(name = "id") Long id,
-            @RequestPart(required = false) EducationUpdateDto educationUpdateDto,
-            @RequestPart(required = false) MultipartFile educationFile,
-            @AuthenticationPrincipal User user
+            @RequestBody(required = false) EducationUpdateDto educationUpdateDto,
+            @AuthenticationPrincipal User user,
+            @PathVariable Long cvId
     ){
-        return educationService.update(educationUpdateDto, id, user, educationFile);
+        return educationService.update(educationUpdateDto, id, user, null, cvId);
     }
 
-    @PostMapping("/education/remove/{id}")
+    @PostMapping("/education/remove/{cvId}/{id}")
     public ResponseEntity<?> removeEducation(
             @PathVariable(name = "id") Long id,
-            @AuthenticationPrincipal User user
+            @AuthenticationPrincipal User user,
+            @PathVariable Long cvId
     ){
-        return educationService.removeEducation(id, user);
+        return educationService.removeEducation(id, user, cvId);
     }
 
     // Technology
 
-    @PostMapping("/technology/add")
+    @PostMapping("/technology/add/{cvId}")
     public ResponseEntity<TechnologyResponseDto> addTechnology(
 
             @RequestParam(name = "technologyId") Long technologyId,
-            @AuthenticationPrincipal User user
+            @AuthenticationPrincipal User user,
+            @PathVariable Long cvId
     ){
-        return technologyService.addTechnology(technologyId, user);
+        return technologyService.addTechnology(technologyId, user, cvId);
     }
 
-    @PostMapping("/technology/remove/{id}")
+    @PostMapping("/technology/remove/{cvId}/{id}")
     public ResponseEntity<?> removeTechnology(
             @PathVariable(name = "id") Long id,
-            @AuthenticationPrincipal User user
+            @AuthenticationPrincipal User user,
+            @PathVariable Long cvId
     ){
-        return technologyService.removeTechnology(id, user);
+        return technologyService.removeTechnology(id, user, cvId);
     }
 
     // Certificate
 
-    @PostMapping("/certificate/add")
+    @PostMapping("/certificate/add/{cvId}")
     public ResponseEntity<CertificateResponseDto> addCertificate(
-            @RequestPart @Valid CertificateCreateDto certificateCreateDto,
+            @RequestBody @Valid CertificateCreateDto certificateCreateDto,
             @AuthenticationPrincipal User user,
-            @RequestPart(required = false) MultipartFile certificateFile
+            @PathVariable Long cvId
     ){
-        return certificateService.addCertificate(user, certificateCreateDto, certificateFile);
+        return certificateService.addCertificate(user, certificateCreateDto, null, cvId);
     }
 
-    @PostMapping("/certificate/update/{id}")
+    @PostMapping("/certificate/update/{cvId}/{id}")
     public ResponseEntity<CertificateResponseDto> updateCertificate(
-            @RequestPart(required = false) CertificateUpdateDto certificateUpdateDto,
+            @RequestBody(required = false) CertificateUpdateDto certificateUpdateDto,
             @AuthenticationPrincipal User user,
             @PathVariable Long id,
-            @RequestPart(required = false) MultipartFile certificateFile
+            @PathVariable Long cvId
     ){
-        return certificateService.updateCertificate(certificateUpdateDto, user, id, certificateFile);
+        return certificateService.updateCertificate(certificateUpdateDto, user, id, null, cvId);
     }
 
-    @PostMapping("/certificate/remove/{id}")
+    @PostMapping("/certificate/remove/{cvId}/{id}")
     public ResponseEntity<?> removeCertificate(
             @PathVariable Long id,
-            @AuthenticationPrincipal User user
+            @AuthenticationPrincipal User user,
+            @PathVariable Long cvId
     ){
-        return certificateService.removeCertificate(id,user);
+        return certificateService.removeCertificate(id,user,cvId);
     }
 
     // Language Skill
 
-    @PostMapping("/language-skill/add")
+    @PostMapping("/language-skill/add/{cvId}")
     public ResponseEntity<?> addLanguageSkill(
             @RequestBody @Valid LanguageSkillCreateDto languageSkillCreateDto,
-            @AuthenticationPrincipal User user
+            @AuthenticationPrincipal User user,
+            @PathVariable Long cvId
     ){
-        return languageSkillService.addLanguageSkill(languageSkillCreateDto, user);
+        return languageSkillService.addLanguageSkill(languageSkillCreateDto, user, cvId );
     }
 
-    @PostMapping("/language-skill/update/{id}")
+    @PostMapping("/language-skill/update/{cvId}/{id}")
     public ResponseEntity<?> updateLanguageSkill(
             @PathVariable(name = "id") Long id,
             @RequestBody @Valid LanguageSkillUpdateDto languageSkillUpdateDto,
-            @AuthenticationPrincipal User user
+            @AuthenticationPrincipal User user,
+            @PathVariable Long cvId
     ){
-        return languageSkillService.update(id, languageSkillUpdateDto, user);
+        return languageSkillService.update(id, languageSkillUpdateDto, user, cvId);
     }
 
-    @PostMapping("/language-skill/remove/{id}")
+    @PostMapping("/language-skill/remove/{cvId}/{id}")
     public ResponseEntity<?> removeLanguageSkill(
             @PathVariable(name = "id") Long id,
-            @AuthenticationPrincipal User user
+            @AuthenticationPrincipal User user,
+            @PathVariable Long cvId
     ){
-        return languageSkillService.removeLanguageSkill(id, user);
+        return languageSkillService.removeLanguageSkill(id, user, cvId);
     }
 
     // Project
 
-    @PostMapping("/project/add")
+    @PostMapping("/project/add/{cvId}")
     public ResponseEntity<?> addProject(
             @AuthenticationPrincipal User user,
-            @RequestBody @Valid ProjectCreateDto projectCreateDto
+            @RequestBody @Valid ProjectCreateDto projectCreateDto,
+            @PathVariable Long cvId
     ){
         System.out.println("ProjectMapper.addProject");
-        return projectService.addProject(user, projectCreateDto);
+        return projectService.addProject(user, projectCreateDto, cvId);
     }
 
-    @PostMapping("/project/update/{id}")
+    @PostMapping("/project/update/{cvId}/{id}")
     public ResponseEntity<?> updateProject(
             @AuthenticationPrincipal User user,
             @RequestBody @Valid ProjectUpdateDto projectUpdateDto,
-            @PathVariable(name = "id") Long id
+            @PathVariable(name = "id") Long id,
+            @PathVariable Long cvId
     ){
-        return projectService.updateProject(id,user, projectUpdateDto);
+        return projectService.updateProject(id,user, projectUpdateDto, cvId);
     }
 
-    @PostMapping("/project/delete/{id}")
+    @PostMapping("/project/delete/{cvId}/{id}")
     public ResponseEntity<?> deleteProject(
             @AuthenticationPrincipal User user,
-            @PathVariable(name = "id") Long id
+            @PathVariable(name = "id") Long id,
+            @PathVariable Long cvId
     ){
-        return projectService.deleteProject(id, user);
+        return projectService.deleteProject(id, user, cvId);
     }
 
 
 
     // Hobby
-
-    @PostMapping("/hobby/add")
+    @PostMapping("/hobby/add/{cvId}")
     public ResponseEntity<?> addHobby(
             @RequestParam(name = "hobby") String hobby,
-            @AuthenticationPrincipal User user
+            @AuthenticationPrincipal User user,
+            @PathVariable Long cvId
     ){
-        return cvService.addHobby(hobby, user);
+        return cvService.addHobby(hobby, user,cvId);
     }
 
-    @PostMapping("/hobby/remove")
+    @PostMapping("/hobby/remove/{cvId}")
     public ResponseEntity<?> removeHobby(
             @RequestParam(name = "hobby") String hobby,
-            @AuthenticationPrincipal User user
+            @AuthenticationPrincipal User user,
+            @PathVariable Long cvId
     ){
-        return cvService.removeHobby(hobby, user);
+        return cvService.removeHobby(hobby, user, cvId);
     }
 
 }

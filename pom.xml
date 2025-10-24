@@ -182,9 +182,17 @@
             <artifactId>tika-core</artifactId>
             <version>3.2.1</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+        </dependency>
+
+
     </dependencies>
 
     <build>
+        <finalName>portfolio</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

@@ -12,6 +12,7 @@ import uz.tuit.portfolio.repository.FeedbackRepository;
 import uz.tuit.portfolio.repository.UserRepository;
 import uz.tuit.portfolio.service.ImageService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -29,7 +30,6 @@ public class CVMapper {
     private final LanguageSkillMapper languageSkillMapper;
     private final ProjectMapper projectMapper;
     private final CVRepository cVRepository;
-    private final OccupationMapper occupationMapper;
     private final CVImageMapper cVImageMapper;
     private final FeedbackMapper feedbackMapper;
     private final FeedbackRepository feedbackRepository;
@@ -61,9 +61,7 @@ public class CVMapper {
 
         cvResponseDto.setHobbies(cv.getHobbies());
 
-        cvResponseDto.setOccupation(
-                occupationMapper.toResponseDto(cv.getOccupation())
-        );
+        cvResponseDto.setOccupation(cv.getOccupation());
 
         cvResponseDto.setCvImage(
                 cVImageMapper.toResponseDto(cv.getCvPhoto()!=null ? cv.getCvPhoto() : null)
@@ -101,12 +99,6 @@ public class CVMapper {
                 certificateMapper.toListResponse(cv.getCertificates())
         );
 
-        List<Feedback> feedbacks = feedbackRepository.findByToUserId(user.getId());
-
-        cvResponseDto.setFeedbacks(
-                feedbackMapper.toListResponse(feedbacks)
-        );
-
         cvResponseDto.setDriverLicense(cv.getDriverLicense());
 
         return cvResponseDto;
@@ -135,7 +127,7 @@ public class CVMapper {
 
         cv.setContactInfo(cvCreateDto.getContactInfo());
 
-        cv.setOccupation(occupationMapper.createOrGet(cvCreateDto.getOccupationId(), cvCreateDto.getOccupationName()));
+        cv.setOccupation(cvCreateDto.getOccupationName());
 
         List<Experience> experiences = experienceMapper.toListEntity(cvCreateDto.getExperience());
 
@@ -175,21 +167,6 @@ public class CVMapper {
 
     }
 
-    public CV getCV(User user) {
-
-        CV cv = user.getCv();
-        if (cv == null) {
-            cv = new CV();
-            cv.setFullName(user.getFullName());
-            cv.setEmail(user.getEmail());
-            cv.setPhoneNumber(user.getPhoneNumber());
-            cVRepository.save(cv);
-            user.setCv(cv);
-            userRepository.save(user);
-        }
-        return cv;
-
-    }
 
     public CV updateCv(CVUpdateDto cvUpdateDto, CV cv) {
 
@@ -270,7 +247,23 @@ public class CVMapper {
             cv.setDriverLicense(cvUpdateDto.getDriverLicense());
         }
 
+        if (cvUpdateDto.getGender() != null) {
+            cv.setGender(cvUpdateDto.getGender());
+        }
+
         return cv;
+
+    }
+
+    public List<CVResponseDto> toListResponseDto(List<CV> cvs, User user) {
+
+        List<CVResponseDto> cvResponseDtos = new ArrayList<>();
+        for (CV cv : cvs) {
+            CVResponseDto cvResponseDto = toResponseDto(cv, user);
+            cvResponseDtos.add(cvResponseDto);
+        }
+        return cvResponseDtos;
+
 
     }
 }

@@ -19,8 +19,6 @@ public class CVCreateDto {
 
     private String occupationName;
 
-    private Long occupationId;
-
     private String fullName;
 
     private String email;

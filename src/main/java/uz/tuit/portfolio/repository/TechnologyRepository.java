@@ -39,4 +39,11 @@ public interface TechnologyRepository extends JpaRepository<Technology, Long> {
                                 """)
     void deleteByCvIdAndTechnologyId(Long cvId, Long technologyId);
 
+
+    @Modifying
+    @Query(nativeQuery = true, value = """
+        delete from portfolio_technologies ct where ct.portfolio_id =:portfolioId and ct.technologies_id =:technologyId
+                
+                                """)
+    void deleteByPortfolioIdAndTechnologyId(Long portfolioId, Long technologyId);
 }

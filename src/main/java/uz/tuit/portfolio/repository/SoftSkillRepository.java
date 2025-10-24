@@ -39,8 +39,14 @@ public interface SoftSkillRepository extends JpaRepository<SoftSkill,Long> {
 
     @Modifying
     @Query(nativeQuery = true, value = """
-     delete from cv_soft_skills ss where ss.cv_id =:cvId and ss.soft_skills_id =:softSkillId 
+     delete from portfolio_soft_skills ss where ss.cv_id =:cvId and ss.soft_skills_id =:softSkillId 
                """)
     void deleteBySoftSkillIdAndCvId(Long softSkillId, Long cvId);
+
+    @Modifying
+    @Query(nativeQuery = true, value = """
+     delete from portfolio_soft_skills ss where ss.portfolio_id =:portfolioId and ss.soft_skills_id =:softSkillId 
+               """)
+    void deleteBySoftSkillIdAndPortfolioId(Long softSkillId, Long portfolioId);
 
 }

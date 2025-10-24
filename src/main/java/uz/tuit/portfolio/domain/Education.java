@@ -19,7 +19,9 @@ public class Education extends Auditable{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
+    private String educationName;
+
+    private String description;
 
     private LocalDate startDate;
 
@@ -34,6 +36,10 @@ public class Education extends Auditable{
     @ManyToOne
     @JoinColumn(name = "cv_id")
     private CV cv;
+
+    @ManyToOne
+    @JoinColumn(name = "portfolio_id")
+    private Portfolio portfolio;
 
 
 }

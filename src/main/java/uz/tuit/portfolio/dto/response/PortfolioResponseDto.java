@@ -12,7 +12,7 @@ import java.util.List;
 @Setter
 @Getter
 @ToString
-public class CVResponseDto {
+public class PortfolioResponseDto {
 
     private Long id;
 
@@ -53,6 +53,8 @@ public class CVResponseDto {
     private List<EducationResponseDto> educations;
 
     private List<CertificateResponseDto> certificates;
+
+    private List<FeedbackResponseDto> feedbacks;
 
     private String driverLicense;
 

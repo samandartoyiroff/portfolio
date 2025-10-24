@@ -35,8 +35,6 @@ public class GenerateData implements CommandLineRunner {
 
             generateDataUtil.generateHardSkills();
 
-            generateDataUtil.generateOccupation();
-
             generateDataUtil.generateSoftSkills();
 
         }

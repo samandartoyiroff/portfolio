@@ -1,5 +1,6 @@
 package uz.tuit.portfolio.service.impl;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -10,15 +11,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
-import uz.tuit.portfolio.domain.CV;
-import uz.tuit.portfolio.domain.Image;
-import uz.tuit.portfolio.domain.Technology;
-import uz.tuit.portfolio.domain.User;
+import uz.tuit.portfolio.domain.*;
 import uz.tuit.portfolio.dto.request.TechnologyCreateDto;
 import uz.tuit.portfolio.dto.request.TechnologyUpdateDto;
 import uz.tuit.portfolio.dto.response.TechnologyResponseDto;
 import uz.tuit.portfolio.mapper.TechnologyMapper;
 import uz.tuit.portfolio.repository.CVRepository;
+import uz.tuit.portfolio.repository.PortfolioRepository;
 import uz.tuit.portfolio.repository.TechnologyRepository;
 import uz.tuit.portfolio.service.ImageService;
 import uz.tuit.portfolio.service.TechnologyService;
@@ -34,6 +33,7 @@ public class TechnologyServiceImpl implements TechnologyService {
     private final TechnologyMapper technologyMapper;
     private final ImageService imageService;
     private final CVRepository cVRepository;
+    private final PortfolioRepository portfolioRepository;
 
     @Transactional
     @Override
@@ -103,9 +103,9 @@ public class TechnologyServiceImpl implements TechnologyService {
 
     @Override
     @Transactional
-    public ResponseEntity<TechnologyResponseDto> addTechnology(Long technologyId, User user) {
+    public ResponseEntity<TechnologyResponseDto> addTechnology(Long technologyId, User user, Long cvId) {
 
-        CV cv = user.getCv();
+        CV cv = cVRepository.findByIdAndUserId(cvId, user.getId()).orElseThrow(()-> new EntityNotFoundException("cv not found"));
 
         List<Technology> technologies = cv.getTechnologies();
 
@@ -124,10 +124,42 @@ public class TechnologyServiceImpl implements TechnologyService {
 
     @Override
     @Transactional
-    public ResponseEntity<?> removeTechnology(Long id, User user) {
+    public ResponseEntity<?> removeTechnology(Long id, User user, Long cvId) {
 
-        technologyRepository.deleteByCvIdAndTechnologyId(user.getCv().getId(), id);
+        CV cv = cVRepository.findByIdAndUserId(cvId, user.getId()).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+
+
+        technologyRepository.deleteByCvIdAndTechnologyId(cv.getId(), id);
         return ResponseEntity.ok().body("Technology has been removed");
 
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<TechnologyResponseDto> addTechnologyInPortfolio(Long technologyId, User user) {
+
+        Portfolio portfolio = user.getPortfolio();
+
+        List<Technology> technologies = portfolio.getTechnologies();
+
+        Technology technology = technologyRepository.findById(technologyId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Technology not found"));
+
+        technologies.add(technology);
+
+        portfolio.setTechnologies(technologies);
+
+        portfolioRepository.save(portfolio);
+
+        return ResponseEntity.ok().body(technologyMapper.toResponseDto(technology));
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<?> removeTechnologyFromPortfolio(Long id, User user) {
+
+        Portfolio portfolio = user.getPortfolio();
+        technologyRepository.deleteByPortfolioIdAndTechnologyId(portfolio.getId(), id);
+        return ResponseEntity.ok().body("Technology has been removed");
     }
 }

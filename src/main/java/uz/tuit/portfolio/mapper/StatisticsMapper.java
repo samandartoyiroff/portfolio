@@ -56,7 +56,6 @@ public class StatisticsMapper {
             userDto.setProfilePhotoUrl(
                     us.getUser().getProfilePhoto() != null ? us.getUser().getProfilePhoto().getPath() : null
             );
-            userDto.setCvId(us.getUser().getCv() != null ? us.getUser().getCv().getId() : null);
             userDto.setIsSubscribed(us.getUser().getIsSubscriber());
             userDto.setCvUrl(us.getUser().getCvUrl());
             userDto.setGender(us.getUser().getGender());

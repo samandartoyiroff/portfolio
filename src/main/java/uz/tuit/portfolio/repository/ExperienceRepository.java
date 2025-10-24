@@ -25,4 +25,17 @@ public interface ExperienceRepository extends JpaRepository<Experience,Long> {
         """)
     void deleteByIdAndCVId(Long id, Long cvId);
 
+    Optional<Experience> findByIdAndCvId(Long id, Long cvId);
+
+    Optional<Experience> findByIdAndPortfolioId(Long id, Long id1);
+
+    @Transactional
+    @Modifying
+    @Query(nativeQuery = true, value = """
+    
+    delete from experience e where e.id =:id and e.portfolio_id =:portfolioId
+    
+        """)
+    void deleteByIdAndPortfolioId(Long id, Long portfolioId);
 }
+

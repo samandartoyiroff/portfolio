@@ -53,9 +53,7 @@ public class UserMapper {
                 user.getProfilePhoto()!=null ? user.getProfilePhoto().getPath() : null
         );
 
-        if (user.getCv() != null) {
-            userResponseDto.setCvId(user.getCv().getId());
-        }
+
 
         return userResponseDto;
     }

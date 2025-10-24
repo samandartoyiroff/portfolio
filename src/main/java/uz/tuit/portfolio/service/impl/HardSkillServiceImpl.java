@@ -1,5 +1,6 @@
 package uz.tuit.portfolio.service.impl;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import uz.tuit.portfolio.domain.CV;
 import uz.tuit.portfolio.domain.HardSkill;
+import uz.tuit.portfolio.domain.Portfolio;
 import uz.tuit.portfolio.domain.User;
 import uz.tuit.portfolio.dto.request.HardSkillCreateDto;
 import uz.tuit.portfolio.dto.request.HardSkillUpdateDto;
@@ -17,6 +19,7 @@ import uz.tuit.portfolio.dto.response.HardSkillResponseDto;
 import uz.tuit.portfolio.mapper.HardSkillMapper;
 import uz.tuit.portfolio.repository.CVRepository;
 import uz.tuit.portfolio.repository.HardSkillRepository;
+import uz.tuit.portfolio.repository.PortfolioRepository;
 import uz.tuit.portfolio.service.HardSkillService;
 
 import java.util.ArrayList;
@@ -28,9 +31,10 @@ import java.util.stream.Collectors;
 public class HardSkillServiceImpl implements HardSkillService {
 
     private final HardSkillRepository hardSkillRepository;
-
+    private final CVRepository cvRepository;
     private final HardSkillMapper hardSkillMapper;
     private final CVRepository cVRepository;
+    private final PortfolioRepository portfolioRepository;
 
     @Override
     public ResponseEntity<?> search(String query) {
@@ -88,11 +92,13 @@ public class HardSkillServiceImpl implements HardSkillService {
 
     @Override
     @Transactional
-    public ResponseEntity<HardSkillResponseDto> addHardSkill(Long hardSkillId, User user) {
+    public ResponseEntity<HardSkillResponseDto> addHardSkill(Long hardSkillId, User user, Long cvId) {
 
         HardSkill hardSkill = hardSkillRepository.findById(hardSkillId)
                 .orElseThrow(() -> new RuntimeException("HardSkill not found"));
-        CV cv = user.getCv();
+
+        CV cv = cvRepository.findByIdAndUserId(cvId, user.getId()).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+
         List<HardSkill> hardSkills = cv.getHardSkills();
         if (hardSkills==null) {
             hardSkills = new ArrayList<>();
@@ -108,9 +114,43 @@ public class HardSkillServiceImpl implements HardSkillService {
 
     @Override
     @Transactional
-    public ResponseEntity<?> removeHardSkill(User user, Long id) {
+    public ResponseEntity<?> removeHardSkill(User user, Long id, Long cvId) {
 
-        hardSkillRepository.removeFromUserHardSkillTable(id, user.getCv().getId());
+        CV cv = cvRepository.findByIdAndUserId(cvId, user.getId()).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+
+        hardSkillRepository.removeFromUserHardSkillTable(id, cv.getId());
+
+        return ResponseEntity.ok("HardSkill has been removed");
+
+    }
+
+    @Override
+    public ResponseEntity<HardSkillResponseDto> addHardSkillToPortfolio(Long hardSkillId, User user) {
+
+        HardSkill hardSkill = hardSkillRepository.findById(hardSkillId)
+                .orElseThrow(() -> new RuntimeException("HardSkill not found"));
+
+        Portfolio portfolio = user.getPortfolio();
+
+        List<HardSkill> hardSkills = portfolio.getHardSkills();
+        if (hardSkills==null) {
+            hardSkills = new ArrayList<>();
+        }
+        hardSkills.add(hardSkill);
+        portfolio.setHardSkills(hardSkills);
+        portfolioRepository.save(portfolio);
+        return ResponseEntity.ok(hardSkillMapper.toResponseDto(hardSkill));
+
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<?> removeHardSkillFromPortfolio(User user, Long id) {
+
+        Portfolio portfolio = user.getPortfolio();
+
+        hardSkillRepository.removeFromUserHardSkillTableInPortfolio(id, portfolio.getId());
+
         return ResponseEntity.ok("HardSkill has been removed");
 
     }

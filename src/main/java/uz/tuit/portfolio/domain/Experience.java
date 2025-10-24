@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @Setter
 @Getter
 @ToString
-public class Experience {
+public class Experience extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,5 +37,9 @@ public class Experience {
     @ManyToOne
     @JoinColumn(name = "cv_id")
     private CV cv;
+
+    @ManyToOne
+    @JoinColumn(name = "portfolio_id")
+    private Portfolio portfolio;
 
 }

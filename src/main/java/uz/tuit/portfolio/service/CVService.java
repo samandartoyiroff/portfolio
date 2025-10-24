@@ -7,15 +7,17 @@ import uz.tuit.portfolio.dto.request.CVCreateDto;
 import uz.tuit.portfolio.dto.request.CVUpdateDto;
 import uz.tuit.portfolio.dto.response.CVResponseDto;
 
+import java.util.List;
+
 public interface CVService {
     ResponseEntity<CVResponseDto> createCV(CVCreateDto cvCreateDto, MultipartFile cvImage, User user);
 
-    ResponseEntity<CVResponseDto> getMyCv(User user);
+    ResponseEntity<List<CVResponseDto>> getMyAllCv(User user);
 
-    ResponseEntity<?> update(CVUpdateDto cvUpdateDto, User user, MultipartFile profilePhoto);
+    ResponseEntity<?> update(CVUpdateDto cvUpdateDto, User user, MultipartFile profilePhoto, Long cvId);
 
-    ResponseEntity<?> addHobby(String hobby, User user);
+    ResponseEntity<?> addHobby(String hobby, User user, Long cvId);
 
-    ResponseEntity<?> removeHobby(String hobby, User user);
+    ResponseEntity<?> removeHobby(String hobby, User user, Long cvId);
 
 }

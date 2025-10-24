@@ -19,9 +19,11 @@ public class EducationMapper {
 
         EducationResponseDto educationResponseDto = new EducationResponseDto();
 
+        educationResponseDto.setDescription(education.getDescription());
+
         educationResponseDto.setId(education.getId());
 
-        educationResponseDto.setName(education.getName());
+        educationResponseDto.setName(education.getEducationName());
 
         educationResponseDto.setStartDate(education.getStartDate());
 
@@ -47,10 +49,11 @@ public class EducationMapper {
 
         Education education = new Education();
 
-        education.setName(educationCreateDto.getName());
+        education.setEducationName(educationCreateDto.getName());
         education.setStartDate(educationCreateDto.getStartDate());
         education.setEndDate(educationCreateDto.getEndDate());
         education.setEducationType(educationCreateDto.getEducationType());
+        education.setDescription(educationCreateDto.getDescription());
 
         return education;
 
@@ -72,10 +75,14 @@ public class EducationMapper {
     public Education update(EducationUpdateDto educationUpdateDto, Education education) {
 
         if (educationUpdateDto.getName() != null && !educationUpdateDto.getName().isBlank()) {
-            education.setName(educationUpdateDto.getName());
+            education.setEducationName(educationUpdateDto.getName());
         }
         if (educationUpdateDto.getStartDate() != null ) {
             education.setStartDate(educationUpdateDto.getStartDate());
+        }
+
+        if (educationUpdateDto.getDescription() != null && !educationUpdateDto.getDescription().isBlank()) {
+            education.setDescription(educationUpdateDto.getDescription());
         }
 
         education.setEndDate(educationUpdateDto.getEndDate());

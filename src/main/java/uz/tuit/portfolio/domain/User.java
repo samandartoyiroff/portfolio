@@ -40,8 +40,8 @@ public class User extends Auditable implements UserDetails {
 
     private String phoneNumber;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    private CV cv;
+    @OneToOne(cascade = CascadeType.ALL)
+    private Portfolio portfolio;
 
     @OneToOne(cascade = CascadeType.ALL)
     private Image profilePhoto;
@@ -61,11 +61,16 @@ public class User extends Auditable implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
+    @Embedded
+    private Address address;
+
     private boolean isVerified = false;
 
     private Boolean isSubscriber;
 
     private String cvUrl;
+
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uz.tuit.portfolio.domain.CV;
 import uz.tuit.portfolio.domain.OTPCode;
+import uz.tuit.portfolio.domain.Portfolio;
 import uz.tuit.portfolio.domain.User;
 import uz.tuit.portfolio.dto.request.*;
 import uz.tuit.portfolio.dto.response.OTPDTO;
@@ -21,6 +22,7 @@ import uz.tuit.portfolio.mapper.UserMapper;
 import uz.tuit.portfolio.model.UserStatus;
 import uz.tuit.portfolio.repository.CVRepository;
 import uz.tuit.portfolio.repository.OTPCodeRepository;
+import uz.tuit.portfolio.repository.PortfolioRepository;
 import uz.tuit.portfolio.repository.UserRepository;
 import uz.tuit.portfolio.service.AuthService;
 import uz.tuit.portfolio.service.EmailService;
@@ -45,6 +47,7 @@ public class AuthServiceImpl implements AuthService {
     private final RoleUtil roleUtil;
     private final CVRepository cVRepository;
     private final PermissionUtil permissionUtil;
+    private final PortfolioRepository portfolioRepository;
 
 
     @Override
@@ -96,10 +99,8 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     public ResponseEntity<?> register(RegisterDto registerDto) {
 
-        CV cv = new CV();
-        cv.setFullName(registerDto.getFullName());
-        cv.setEmail(registerDto.getEmail());
-        cVRepository.save(cv);
+        Portfolio portfolio = new Portfolio();
+        portfolioRepository.save(portfolio);
 
         User user = new User();
         user.setUsername(registerDto.getUsername());
@@ -110,7 +111,7 @@ public class AuthServiceImpl implements AuthService {
         user.setPermissions(permissionUtil.permissionForUser());
         user.setFullName(registerDto.getFullName());
         user.setGender(registerDto.getGender());
-        user.setCv(cv);
+        user.setPortfolio(portfolio);
         userRepository.save(user);
 
         Random random = new Random();

@@ -27,5 +27,8 @@ public class Certificate {
     @JoinColumn(name = "cv_id")
     private CV cv;
 
+    @ManyToOne
+    @JoinColumn(name = "portfolio_id")
+    private Portfolio portfolio;
 
 }

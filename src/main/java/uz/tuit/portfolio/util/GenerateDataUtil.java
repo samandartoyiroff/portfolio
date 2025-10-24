@@ -22,7 +22,6 @@ public class GenerateDataUtil {
     private final LanguageRepository languageRepository;
     private final TechnologyRepository technologyRepository;
     private final HardSkillRepository hardSkillRepository;
-    private final OccupationRepository occupationRepository;
     private final SoftSkillRepository softSkillRepository;
 
     public void generateSuperAdmin(){
@@ -125,19 +124,6 @@ public class GenerateDataUtil {
             }
 
 
-        }
-
-    }
-
-    public void generateOccupation() {
-
-        for (String occupation : Data.OCCUPATIONS) {
-
-            if (occupationRepository.findByName(occupation).isEmpty()) {
-                Occupation occupation1 = new Occupation();
-                occupation1.setName(occupation);
-                occupationRepository.save(occupation1);
-            }
         }
 
     }
