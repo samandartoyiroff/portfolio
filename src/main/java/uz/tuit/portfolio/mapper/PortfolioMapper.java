@@ -99,6 +99,8 @@ public class PortfolioMapper {
 
         cvResponseDto.setDriverLicense(cv.getDriverLicense());
 
+        cvResponseDto.setTemplate(cv.getTemplate());
+
         return cvResponseDto;
 
     }
@@ -172,6 +174,10 @@ public class PortfolioMapper {
                 portfolio.getAddress().setCityTown(address.getCityTown());
             }
 
+        }
+
+        if (portfolioUpdateDto.getTemplate()!=null && !portfolioUpdateDto.getTemplate().isBlank()) {
+            portfolio.setTemplate(portfolioUpdateDto.getTemplate());
         }
 
         return portfolio;

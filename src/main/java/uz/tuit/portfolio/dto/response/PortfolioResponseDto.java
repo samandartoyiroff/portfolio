@@ -58,4 +58,6 @@ public class PortfolioResponseDto {
 
     private String driverLicense;
 
+    private String template;
+
 }

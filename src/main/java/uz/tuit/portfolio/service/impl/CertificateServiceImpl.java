@@ -41,7 +41,14 @@ public class CertificateServiceImpl implements CertificateService {
             certificate.setFile(file);
         }
 
-        CV cv = cVRepository.findByIdAndUserId(cvId, user.getId()).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        CV cv;
+
+        if (user != null) {
+            cv = cVRepository.findByIdAndUserId(cvId, user.getId()).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        }
+        else {
+            cv = cVRepository.findById(cvId).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        }
 
         certificate.setCv(cv);
 
@@ -56,7 +63,14 @@ public class CertificateServiceImpl implements CertificateService {
     @Transactional
     public ResponseEntity<CertificateResponseDto> updateCertificate(CertificateUpdateDto certificateUpdateDto, User user, Long id, MultipartFile certificateFile, Long cvId) {
 
-        CV cv = cVRepository.findByIdAndUserId(cvId, user.getId()).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        CV cv;
+
+        if (user != null) {
+            cv = cVRepository.findByIdAndUserId(cvId, user.getId()).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        }
+        else {
+            cv = cVRepository.findById(cvId).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        }
 
         List<Certificate> certificates = cv.getCertificates();
 
@@ -82,7 +96,14 @@ public class CertificateServiceImpl implements CertificateService {
     @Transactional
     public ResponseEntity<?> removeCertificate(Long id, User user, Long cvId) {
 
-        CV cv = cVRepository.findByIdAndUserId(cvId, user.getId()).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        CV cv;
+
+        if (user != null) {
+            cv = cVRepository.findByIdAndUserId(cvId, user.getId()).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        }
+        else {
+            cv = cVRepository.findById(cvId).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        }
 
         List<Certificate> certificates = cv.getCertificates();
 

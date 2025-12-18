@@ -2,6 +2,7 @@ package uz.tuit.portfolio.service.impl;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -92,12 +93,21 @@ public class SoftSkillServiceImpl implements SoftSkillService {
 
     @Override
     @Transactional
-    public ResponseEntity<SoftSkillResponseDto> addSoftSkill(User user, Long softSkillId, Long cvId) {
+    public ResponseEntity<SoftSkillResponseDto> addSoftSkill(User user, SoftSkillCreateDto softSkillCreateDto, Long cvId) {
 
-        SoftSkill softSkill = softSkillRepository.findById(softSkillId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        SoftSkill softSkill = softSkillMapper.toEntity(softSkillCreateDto);
 
-        CV cv = cVRepository.findByIdAndUserId(cvId, user.getId()).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        softSkillRepository.save(softSkill);
+
+
+        CV cv;
+
+        if (user != null) {
+            cv = cVRepository.findByIdAndUserId(cvId, user.getId()).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        }
+        else {
+            cv = cVRepository.findById(cvId).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        }
 
         cv.getSoftSkills().add(softSkill);
         cVRepository.save(cv);
@@ -108,11 +118,11 @@ public class SoftSkillServiceImpl implements SoftSkillService {
 
     @Override
     @Transactional
-    public ResponseEntity<?> removeSoftSkill(Long id, User user, Long cvId) {
+    public ResponseEntity<?> removeSoftSkill(Long softSkillId, User user, Long cvId) {
 
         CV cv = cVRepository.findByIdAndUserId(cvId, user.getId()).orElseThrow(()-> new EntityNotFoundException("cv not found"));
 
-        softSkillRepository.deleteBySoftSkillIdAndCvId(id, cv.getId());
+        softSkillRepository.deleteBySoftSkillIdAndCvId(softSkillId, cv.getId());
 
         return ResponseEntity.ok().build();
 
@@ -120,9 +130,9 @@ public class SoftSkillServiceImpl implements SoftSkillService {
 
     @Override
     @Transactional
-    public ResponseEntity<SoftSkillResponseDto> addSoftSkillToPortfolio(User user, Long softSkillId) {
-        SoftSkill softSkill = softSkillRepository.findById(softSkillId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    public ResponseEntity<SoftSkillResponseDto> addSoftSkillToPortfolio(User user, @Valid SoftSkillCreateDto softSkillCreateDto) {
+        SoftSkill softSkill =softSkillMapper.toEntity(softSkillCreateDto);
+        softSkillRepository.save(softSkill);
 
         Portfolio portfolio = user.getPortfolio();
 
@@ -137,6 +147,7 @@ public class SoftSkillServiceImpl implements SoftSkillService {
     public ResponseEntity<?> removeSoftSkillFromPortfolio(Long id, User user) {
 
         Portfolio portfolio = user.getPortfolio();
+
         softSkillRepository.deleteBySoftSkillIdAndPortfolioId(id, portfolio.getId());
 
         return ResponseEntity.ok().build();

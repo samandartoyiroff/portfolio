@@ -19,12 +19,12 @@ public interface SoftSkillService {
 
     ResponseEntity<?> updateById(Long id, @Valid SoftSkillUpdateDto softSkillUpdateDto);
 
-    ResponseEntity<SoftSkillResponseDto> addSoftSkill(User user, Long softSkillId, Long cvId);
+    ResponseEntity<SoftSkillResponseDto> addSoftSkill(User user, SoftSkillCreateDto softSkillId, Long cvId);
 
     ResponseEntity<?> removeSoftSkill(Long id, User user, Long cvId);
 
 
-    ResponseEntity<SoftSkillResponseDto> addSoftSkillToPortfolio(User user, Long softSkillId);
+    ResponseEntity<SoftSkillResponseDto> addSoftSkillToPortfolio(User user, @Valid SoftSkillCreateDto softSkillId);
 
     ResponseEntity<?> removeSoftSkillFromPortfolio(Long id, User user);
 }

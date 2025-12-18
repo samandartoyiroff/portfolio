@@ -17,7 +17,7 @@ public class SoftSkillController {
 
     private final SoftSkillService softSkillService;
 
-    @GetMapping("/search")
+   /* @GetMapping("/search")
     public ResponseEntity<?> search(
             @RequestParam(name = "query", required = false) String query
     ) {
@@ -54,5 +54,5 @@ public class SoftSkillController {
             @RequestBody @Valid SoftSkillUpdateDto softSkillUpdateDto
     ){
         return softSkillService.updateById(id, softSkillUpdateDto);
-    }
+    }*/
 }

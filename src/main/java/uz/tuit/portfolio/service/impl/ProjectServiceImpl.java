@@ -33,7 +33,14 @@ public class ProjectServiceImpl implements ProjectService {
     @Transactional
     public ResponseEntity<?> addProject(User user, ProjectCreateDto projectCreateDto, Long cvId) {
 
-        CV cv = cVRepository.findByIdAndUserId(cvId, user.getId()).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        CV cv;
+
+        if (user != null) {
+            cv = cVRepository.findByIdAndUserId(cvId, user.getId()).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        }
+        else {
+            cv = cVRepository.findById(cvId).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        }
 
         Project project = projectMapper.toEntity(projectCreateDto);
 
@@ -51,8 +58,15 @@ public class ProjectServiceImpl implements ProjectService {
     @Transactional
     public ResponseEntity<?> updateProject(Long id, User user, ProjectUpdateDto projectUpdateDto, Long cvId) {
 
-        CV cv = cVRepository.findByIdAndUserId(cvId, user.getId()).orElseThrow(()-> new EntityNotFoundException("cv not found"));
 
+        CV cv;
+
+        if (user != null) {
+            cv = cVRepository.findByIdAndUserId(cvId, user.getId()).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        }
+        else {
+            cv = cVRepository.findById(cvId).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        }
 
         List<Project> projects = cv.getProjects();
 
@@ -77,7 +91,14 @@ public class ProjectServiceImpl implements ProjectService {
     @Transactional
     public ResponseEntity<?> deleteProject(Long id, User user, Long cvId) {
 
-        CV cv = cVRepository.findByIdAndUserId(cvId, user.getId()).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        CV cv;
+
+        if (user != null) {
+            cv = cVRepository.findByIdAndUserId(cvId, user.getId()).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        }
+        else {
+            cv = cVRepository.findById(cvId).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        }
 
         List<Project> projects = cv.getProjects();
 

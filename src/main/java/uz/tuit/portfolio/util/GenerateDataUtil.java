@@ -1,10 +1,12 @@
 package uz.tuit.portfolio.util;
 
 import lombok.RequiredArgsConstructor;
+import net.datafaker.Faker;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import uz.tuit.portfolio.component.Data;
 import uz.tuit.portfolio.domain.*;
+import uz.tuit.portfolio.model.Gender;
 import uz.tuit.portfolio.model.RoleName;
 import uz.tuit.portfolio.model.UserStatus;
 import uz.tuit.portfolio.repository.*;
@@ -23,6 +25,7 @@ public class GenerateDataUtil {
     private final TechnologyRepository technologyRepository;
     private final HardSkillRepository hardSkillRepository;
     private final SoftSkillRepository softSkillRepository;
+    private final PortfolioRepository portfolioRepository;
 
     public void generateSuperAdmin(){
         User userForSuperAdmin = new User();
@@ -108,7 +111,6 @@ public class GenerateDataUtil {
                 technologyRepository.save(tech);
             }
 
-
         }
 
     }
@@ -136,6 +138,32 @@ public class GenerateDataUtil {
             SoftSkill skill = new SoftSkill();
             skill.setName(softSkill);
             softSkillRepository.save(skill);
+        }
+
+    }
+
+    public void generateUsers() {
+
+        Faker faker = new Faker();
+
+        for (int i = 0; i < 20; i++) {
+
+            Portfolio portfolio = new Portfolio();
+
+            User user = new User();
+            user.setVerified(true);
+            user.setUsername("user0" + i);
+            user.setEmail("user0" + i + "@gmail.com");
+            user.setPassword(passwordEncoder.encode("user0" + i));
+            user.setFullName(faker.name().fullName());
+            user.setGender(Gender.values()[faker.random().nextInt(Gender.values().length)]);
+            user.setStatus(UserStatus.ACTIVE);
+            user.setRoles(roleUtil.rolesForUser());
+            user.setPermissions(permissionUtil.permissionForUser());
+            user.setPortfolio(portfolio);
+            userRepository.save(user);
+
+
         }
 
     }

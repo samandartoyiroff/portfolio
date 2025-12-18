@@ -93,9 +93,9 @@ public class PortfolioController {
     @PostMapping("/soft-skill/add")
     public ResponseEntity<SoftSkillResponseDto> addSoftSkill(
             @AuthenticationPrincipal User user,
-            @RequestParam(name = "softSkillId") Long softSkillId
+            @RequestBody @Valid SoftSkillCreateDto softSkillCreateDto
     ){
-        return softSkillService.addSoftSkillToPortfolio(user, softSkillId);
+        return softSkillService.addSoftSkillToPortfolio(user, softSkillCreateDto);
     }
 
     @PostMapping("/soft-skill/remove/{id}")

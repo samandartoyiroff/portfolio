@@ -118,6 +118,8 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
                 transactionRepository.save(transaction);
 
+                user.setFreeCvCount(user.getFreeCvCount()+subscription.getFreeCvCount());
+
                 UserSubscription userSubscription = userSubscriptionMapper.toEntity(user, subscription);
 
                 userSubscriptionRepository.save(userSubscription);

@@ -41,7 +41,14 @@ public class EducationServiceImpl implements EducationService {
             education.setCertificate(file);
         }
 
-        CV cv = cVRepository.findByIdAndUserId(cvId, user.getId()).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        CV cv;
+
+        if (user != null) {
+            cv = cVRepository.findByIdAndUserId(cvId, user.getId()).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        }
+        else {
+            cv = cVRepository.findById(cvId).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        }
 
         education.setCv(cv);
         List<Education> educations = cv.getEducations();
@@ -58,8 +65,14 @@ public class EducationServiceImpl implements EducationService {
     @Transactional
     public ResponseEntity<EducationResponseDto> update(EducationUpdateDto educationUpdateDto, Long id, User user, MultipartFile educationFile, Long cvId) {
 
-        CV cv = cVRepository.findByIdAndUserId(cvId, user.getId()).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        CV cv;
 
+        if (user != null) {
+            cv = cVRepository.findByIdAndUserId(cvId, user.getId()).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        }
+        else {
+            cv = cVRepository.findById(cvId).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        }
         List<Education> educations = cv.getEducations();
 
         Education education = educations.stream().filter(education1 -> education1.getId().equals(id)).findFirst()
@@ -86,7 +99,14 @@ public class EducationServiceImpl implements EducationService {
     @Transactional
     public ResponseEntity<?> removeEducation(Long id, User user, Long cvId) {
 
-        CV cv = cVRepository.findByIdAndUserId(cvId, user.getId()).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        CV cv;
+
+        if (user != null) {
+            cv = cVRepository.findByIdAndUserId(cvId, user.getId()).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        }
+        else {
+            cv = cVRepository.findById(cvId).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        }
 
         List<Education> educations = cv.getEducations();
 

@@ -7,6 +7,7 @@ import uz.tuit.portfolio.domain.Address;
 import uz.tuit.portfolio.domain.ContactInfo;
 import uz.tuit.portfolio.model.Gender;
 
+import java.util.Date;
 import java.util.List;
 
 @Setter
@@ -42,8 +43,6 @@ public class CVResponseDto {
 
     private List<HardSkillResponseDto> hardSkills;
 
-    private List<TechnologyResponseDto> technologies;
-
     private List<ProjectResponseDto> projects;
 
     private List<LanguageSkillResponseDto> languages;
@@ -56,4 +55,7 @@ public class CVResponseDto {
 
     private String driverLicense;
 
+    private String template;
+
+    private Date dateOfBirth;
 }

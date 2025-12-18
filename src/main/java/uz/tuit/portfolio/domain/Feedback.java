@@ -25,11 +25,6 @@ public class Feedback extends Auditable {
     private String feedback;
 
     @ManyToOne
-    @JoinColumn(name = "cv_id")
-    @ToString.Exclude
-    private CV cv;
-
-    @ManyToOne
     @JoinColumn(name = "portfolio_id")
     private Portfolio portfolio;
 

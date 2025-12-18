@@ -3,6 +3,7 @@ package uz.tuit.portfolio.mapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import uz.tuit.portfolio.domain.SoftSkill;
+import uz.tuit.portfolio.dto.request.SoftSkillCreateDto;
 import uz.tuit.portfolio.dto.response.SoftSkillResponseDto;
 import uz.tuit.portfolio.repository.SoftSkillRepository;
 
@@ -29,4 +30,12 @@ public class SoftSkillMapper {
         return softSkills.stream().map(this::toResponseDto).collect(Collectors.toList());
     }
 
+    public SoftSkill toEntity(SoftSkillCreateDto softSkillCreateDto) {
+
+        SoftSkill softSkill = new SoftSkill();
+        softSkill.setName(softSkillCreateDto.getName());
+        return softSkill;
+
+
+    }
 }

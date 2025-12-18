@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import uz.tuit.portfolio.model.Gender;
 import uz.tuit.portfolio.model.UserStatus;
 
 import java.util.Set;
@@ -25,17 +26,21 @@ public class UserResponseDto extends AuditableResponseDto {
 
     private String phoneNumber;
 
-    private Set<String> roles;
+    private String role;
 
     private Set<String> permissions;
 
     private UserStatus status;
 
-    private Long cvId;
+    private Long portfolioId;
 
     private String imageUrl;
 
     private boolean isverified;
+
+    private Integer freeCvCount;
+
+    private Gender gender;
 
 
 }

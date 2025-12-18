@@ -23,10 +23,6 @@ public interface TechnologyService {
 
     ResponseEntity<?> updateById(Long id, MultipartFile file, TechnologyUpdateDto technologyUpdateDto);
 
-    ResponseEntity<TechnologyResponseDto> addTechnology(Long technologyId, User user, Long cvId);
-
-    ResponseEntity<?> removeTechnology(Long id, User user, Long cvId);
-
     ResponseEntity<TechnologyResponseDto> addTechnologyInPortfolio(Long technologyId, User user);
 
     ResponseEntity<?> removeTechnologyFromPortfolio(Long id, User user);

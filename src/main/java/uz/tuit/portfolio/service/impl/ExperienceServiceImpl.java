@@ -33,7 +33,14 @@ public class ExperienceServiceImpl implements ExperienceService {
 
         Experience experience = experienceMapper.toEntity(experienceCreateDto);
 
-        CV cv = cvRepository.findByIdAndUserId(cvId, user.getId()).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        CV cv;
+
+        if (user != null) {
+            cv = cvRepository.findByIdAndUserId(cvId, user.getId()).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        }
+        else {
+            cv = cvRepository.findById(cvId).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        }
 
         experience.setCv(cv);
 
@@ -54,8 +61,14 @@ public class ExperienceServiceImpl implements ExperienceService {
         Experience experience = experienceRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Experience not found"));
 
-        CV cv = cvRepository.findByIdAndUserId(cvId, user.getId()).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        CV cv;
 
+        if (user != null) {
+            cv = cvRepository.findByIdAndUserId(cvId, user.getId()).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        }
+        else {
+            cv = cvRepository.findById(cvId).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        }
         if (!experience.getCv().getId().equals(cv.getId())) throw new EntityNotFoundException("experience not belong to cv");
 
         experience = experienceMapper.updateById(experienceUpdateDto, experience);
@@ -70,10 +83,14 @@ public class ExperienceServiceImpl implements ExperienceService {
     @Transactional
     public ResponseEntity<?> delete(Long id, User user, Long cvId) {
 
-        CV cv = cvRepository.findByIdAndUserId(cvId, user.getId()).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        CV cv;
 
-        Experience experience = experienceRepository.findByIdAndCvId(id, cv.getId()).orElseThrow(() -> new EntityNotFoundException("experience not found"));
-
+        if (user != null) {
+            cv = cvRepository.findByIdAndUserId(cvId, user.getId()).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        }
+        else {
+            cv = cvRepository.findById(cvId).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        }
         experienceRepository.deleteByIdAndCVId(id, cv.getId());
 
         return ResponseEntity.ok("Experience deleted successfully");

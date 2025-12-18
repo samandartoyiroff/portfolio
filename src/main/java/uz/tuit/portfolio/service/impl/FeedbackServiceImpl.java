@@ -34,6 +34,7 @@ public class FeedbackServiceImpl implements FeedbackService {
         feedback.setToUser(toUser);
         feedback.setFeedback(feedbackCreateDto.getFeedback());
         feedback.setFromUser(fromUser);
+        feedback.setPortfolio(toUser.getPortfolio());
 
         feedbackRepository.save(feedback);
 
@@ -51,7 +52,7 @@ public class FeedbackServiceImpl implements FeedbackService {
 
         if (!feedback.getToUser().getId().equals(user.getId())) throw new IllegalArgumentException("Feedback not belong to this user");
 
-        feedback.setCv(null);
+        feedback.setPortfolio(null);
 
         feedbackRepository.delete(feedback);
 

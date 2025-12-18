@@ -49,7 +49,7 @@ public class Portfolio {
     @ManyToMany(fetch = FetchType.EAGER)
     private List<HardSkill> hardSkills; // max 30
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.EAGER)
     private List<SoftSkill> softSkills;  // Max 10
 
     @OneToMany(mappedBy = "portfolio", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
@@ -73,6 +73,9 @@ public class Portfolio {
 
     private String driverLicense;
 
+    @Enumerated(EnumType.STRING)
     private Gender gender;
+
+    private String template;
 
 }

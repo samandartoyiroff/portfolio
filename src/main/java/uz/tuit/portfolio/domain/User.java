@@ -66,11 +66,11 @@ public class User extends Auditable implements UserDetails {
 
     private boolean isVerified = false;
 
-    private Boolean isSubscriber;
+    private Boolean isSubscriber = false;
 
     private String cvUrl;
 
-
+    private Integer freeCvCount=0;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

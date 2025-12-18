@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import uz.tuit.portfolio.model.HardSkillDegree;
 import uz.tuit.portfolio.model.JobType;
 
 import java.time.LocalDate;
@@ -16,4 +17,5 @@ public class HardSkillCreateDto {
     @NotBlank
     private String name;
 
+    private HardSkillDegree degree;
 }

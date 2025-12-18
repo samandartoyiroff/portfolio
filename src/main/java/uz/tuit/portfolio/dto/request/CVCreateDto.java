@@ -10,6 +10,7 @@ import uz.tuit.portfolio.domain.ContactInfo;
 import uz.tuit.portfolio.dto.response.*;
 import uz.tuit.portfolio.model.Gender;
 
+import java.util.Date;
 import java.util.List;
 
 @Setter
@@ -28,6 +29,8 @@ public class CVCreateDto {
     private String aboutMe;
 
     private Gender gender;
+
+    private Date dateOfBirth;
 
     private ContactInfo contactInfo;
 
@@ -52,5 +55,7 @@ public class CVCreateDto {
     private List<CertificateCreateDto> certificates;
 
     private String driverLicense;
+
+    private String template;
 
 }

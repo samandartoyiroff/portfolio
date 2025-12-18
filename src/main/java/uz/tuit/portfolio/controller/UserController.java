@@ -60,6 +60,4 @@ public class UserController {
         return userService.updateMe(user, userUpdateDto, profilePhoto);
     }
 
-
-
 }

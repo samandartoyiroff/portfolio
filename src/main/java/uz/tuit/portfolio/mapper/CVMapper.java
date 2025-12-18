@@ -4,12 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import uz.tuit.portfolio.domain.*;
-import uz.tuit.portfolio.dto.request.CVCreateDto;
-import uz.tuit.portfolio.dto.request.CVUpdateDto;
+import uz.tuit.portfolio.dto.request.*;
 import uz.tuit.portfolio.dto.response.CVResponseDto;
 import uz.tuit.portfolio.repository.CVRepository;
-import uz.tuit.portfolio.repository.FeedbackRepository;
-import uz.tuit.portfolio.repository.UserRepository;
 import uz.tuit.portfolio.service.ImageService;
 
 import java.util.ArrayList;
@@ -31,9 +28,7 @@ public class CVMapper {
     private final ProjectMapper projectMapper;
     private final CVRepository cVRepository;
     private final CVImageMapper cVImageMapper;
-    private final FeedbackMapper feedbackMapper;
-    private final FeedbackRepository feedbackRepository;
-    private final UserRepository userRepository;
+
 
     public CVResponseDto toResponseDto(CV cv, User user) {
 
@@ -41,11 +36,13 @@ public class CVMapper {
 
         cvResponseDto.setId(cv.getId());
 
-        cvResponseDto.setUserId(user.getId());
+        if (user!=null){
+            cvResponseDto.setUserId(user.getId());
+        }
+
+        cvResponseDto.setGender(cv.getGender());
 
         cvResponseDto.setFullName(cv.getFullName());
-
-        cvResponseDto.setGender(user.getGender());
 
         cvResponseDto.setEmail(cv.getEmail());
 
@@ -55,51 +52,73 @@ public class CVMapper {
 
         cvResponseDto.setAddress( cv.getAddress());
 
-        cvResponseDto.setGender(user.getGender());
-
         cvResponseDto.setContactInfo(cv.getContactInfo());
 
         cvResponseDto.setHobbies(cv.getHobbies());
 
         cvResponseDto.setOccupation(cv.getOccupation());
 
+        cvResponseDto.setDateOfBirth(cv.getBirthDate());
+
         cvResponseDto.setCvImage(
                 cVImageMapper.toResponseDto(cv.getCvPhoto()!=null ? cv.getCvPhoto() : null)
         );
 
-        cvResponseDto.setSoftSkills(
-                softSkillMapper.toListResponseDto(cv.getSoftSkills())
-        );
 
-        cvResponseDto.setHardSkills(
-                hardSkillMapper.toListResponse(cv.getHardSkills())
-        );
+        List<SoftSkill> softSkills = cv.getSoftSkills();
+        if (softSkills != null &&  !softSkills.isEmpty()) {
+            cvResponseDto.setSoftSkills(
+                    softSkillMapper.toListResponseDto(softSkills)
+            );
+        }
 
-        cvResponseDto.setTechnologies(
-                technologyMapper.toListResponse(cv.getTechnologies())
-        );
 
-        cvResponseDto.setProjects(
-                projectMapper.toListDto(cv.getProjects())
-        );
+        List<HardSkill> hardSkills = cv.getHardSkills();
+        if (hardSkills != null && !hardSkills.isEmpty()) {
+            cvResponseDto.setHardSkills(
+                    hardSkillMapper.toListResponse(hardSkills)
+            );
+        }
 
-        cvResponseDto.setLanguages(
-                languageSkillMapper.toListResponse(cv.getLanguageSkills())
-        );
 
-        cvResponseDto.setExperience(
-                experienceMapper.toListResponse(cv.getExperiences())
-        );
+        List<Project> projects = cv.getProjects();
+        if (projects != null && !projects.isEmpty()) {
+            cvResponseDto.setProjects(
+                    projectMapper.toListDto(projects)
+            );
+        }
 
-        cvResponseDto.setEducations(
-                educationMapper.toListResponse(cv.getEducations())
-        );
+        List<LanguageSkill> languageSkills = cv.getLanguageSkills();
+        if (languageSkills != null && !languageSkills.isEmpty()) {
+            cvResponseDto.setLanguages(
+                    languageSkillMapper.toListResponse(languageSkills)
+            );
+        }
 
-        cvResponseDto.setCertificates(
-                certificateMapper.toListResponse(cv.getCertificates())
-        );
+        List<Experience> experiences = cv.getExperiences();
+        if (experiences != null && !experiences.isEmpty()) {
+            cvResponseDto.setExperience(
+                    experienceMapper.toListResponse(experiences)
+            );
+        }
+
+        List<Education> educations = cv.getEducations();
+        if (educations != null && !educations.isEmpty()) {
+            cvResponseDto.setEducations(
+                    educationMapper.toListResponse(educations)
+            );
+        }
+
+        List<Certificate> certificates = cv.getCertificates();
+        if (certificates != null && !certificates.isEmpty()) {
+            cvResponseDto.setCertificates(
+                    certificateMapper.toListResponse(certificates)
+            );
+        }
 
         cvResponseDto.setDriverLicense(cv.getDriverLicense());
+
+        cvResponseDto.setTemplate(cv.getTemplate());
 
         return cvResponseDto;
 
@@ -119,7 +138,11 @@ public class CVMapper {
 
         cv.setCvPhoto(image);
 
+        cv.setGender(cvCreateDto.getGender());
+
         cv.setAddress(cvCreateDto.getAddress());
+
+        cv.setBirthDate(cvCreateDto.getDateOfBirth());
 
         cv.setAboutMe(cvCreateDto.getAboutMe());
 
@@ -129,37 +152,52 @@ public class CVMapper {
 
         cv.setOccupation(cvCreateDto.getOccupationName());
 
-        List<Experience> experiences = experienceMapper.toListEntity(cvCreateDto.getExperience());
+        List<ExperienceCreateDto> experience = cvCreateDto.getExperience();
+        if (experience != null && !experience.isEmpty()) {
+            List<Experience> experiences = experienceMapper.toListEntity(experience);
+            cv.setExperiences(experiences);
+        }
 
-        cv.setExperiences(experiences);
 
-        List<SoftSkill> softSkills = softSkillMapper.toListEntity(cvCreateDto.getSoftSkillIds());
+        List<Long> softSkillIds = cvCreateDto.getSoftSkillIds();
+        if (softSkillIds != null && !softSkillIds.isEmpty()) {
+            System.out.println("Soft skill null emas");
+            List<SoftSkill> softSkills = softSkillMapper.toListEntity(softSkillIds);
+            cv.setSoftSkills(softSkills);
+        }
 
-        cv.setSoftSkills(softSkills);
 
-        List<HardSkill> hardSkills = hardSkillMapper.toListEntity(cvCreateDto.getHardSkillIds());
+        List<Long> hardSkillIds = cvCreateDto.getHardSkillIds();
+        if (hardSkillIds != null && !hardSkillIds.isEmpty()) {
+            List<HardSkill> hardSkills = hardSkillMapper.toListEntity(hardSkillIds);
+            cv.setHardSkills(hardSkills);
+        }
 
-        cv.setHardSkills(hardSkills);
+        List<EducationCreateDto> educations1 = cvCreateDto.getEducations();
+        if (educations1 != null && !educations1.isEmpty()) {
+            List<Education> educations = educationMapper.toListEntity(educations1);
+            cv.setEducations(educations);
+        }
 
-        List<Education> educations = educationMapper.toListEntity(cvCreateDto.getEducations());
+        List<CertificateCreateDto> certificates1 = cvCreateDto.getCertificates();
+        if (certificates1 != null && !certificates1.isEmpty()) {
+            List<Certificate> certificates = certificateMapper.toListEntity(certificates1);
+            cv.setCertificates(certificates);
+        }
 
-        cv.setEducations(educations);
+        List<LanguageSkillCreateDto> languages = cvCreateDto.getLanguages();
+        if (languages != null && !languages.isEmpty()) {
+            List<LanguageSkill> languageSkills = languageSkillMapper.toListEntity(languages);
+            cv.setLanguageSkills(languageSkills);
+        }
 
-        List<Technology> technologies = technologyMapper.toListEntity(cvCreateDto.getTechnologySkillIds());
+        List<ProjectCreateDto> projects1 = cvCreateDto.getProjects();
+        if (projects1 != null && !projects1.isEmpty()) {
+            List<Project> projects = projectMapper.toListEntity(projects1);
+            cv.setProjects(projects);
+        }
 
-        cv.setTechnologies(technologies);
-
-        List<Certificate> certificates = certificateMapper.toListEntity(cvCreateDto.getCertificates());
-
-        cv.setCertificates(certificates);
-
-        List<LanguageSkill> languageSkills = languageSkillMapper.toListEntity(cvCreateDto.getLanguages());
-
-        cv.setLanguageSkills(languageSkills);
-
-        List<Project> projects = projectMapper.toListEntity(cvCreateDto.getProjects());
-
-        cv.setProjects(projects);
+        cv.setTemplate(cvCreateDto.getTemplate());
 
         cv.setDriverLicense(cvCreateDto.getDriverLicense());
 
@@ -249,6 +287,14 @@ public class CVMapper {
 
         if (cvUpdateDto.getGender() != null) {
             cv.setGender(cvUpdateDto.getGender());
+        }
+
+        if (cvUpdateDto.getTemplate() != null &&  !cvUpdateDto.getTemplate().isBlank()) {
+            cv.setTemplate(cvUpdateDto.getTemplate());
+        }
+
+        if(cvUpdateDto.getDateOfBirth()!=null){
+            cv.setBirthDate(cvUpdateDto.getDateOfBirth());
         }
 
         return cv;

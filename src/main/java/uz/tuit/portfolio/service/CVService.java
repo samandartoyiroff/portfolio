@@ -1,5 +1,6 @@
 package uz.tuit.portfolio.service;
 
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 import uz.tuit.portfolio.domain.User;
@@ -19,5 +20,13 @@ public interface CVService {
     ResponseEntity<?> addHobby(String hobby, User user, Long cvId);
 
     ResponseEntity<?> removeHobby(String hobby, User user, Long cvId);
+
+    ResponseEntity<?> deleteCv(Long cvId, User user);
+
+    ResponseEntity<CVResponseDto> createCvNonUser(@Valid CVCreateDto cvCreateDto, MultipartFile cvImage);
+
+    ResponseEntity<?> updateCVNonUser(CVUpdateDto cvUpdateDto, MultipartFile cvImage, Long cvId);
+
+    ResponseEntity<CVResponseDto> findById(Long id);
 
 }

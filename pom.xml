@@ -81,6 +81,13 @@
             <version>5.5.13.3</version>
         </dependency>
 
+        <dependency>
+            <groupId>net.datafaker</groupId>
+            <artifactId>datafaker</artifactId>
+            <version>2.3.0</version>
+        </dependency>
+
+
 
         <!-- Database -->
         <dependency>

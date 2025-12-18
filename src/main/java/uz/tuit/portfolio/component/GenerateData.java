@@ -33,9 +33,7 @@ public class GenerateData implements CommandLineRunner {
 
             generateDataUtil.generateTechnology();
 
-            generateDataUtil.generateHardSkills();
-
-            generateDataUtil.generateSoftSkills();
+            generateDataUtil.generateUsers();
 
         }
 

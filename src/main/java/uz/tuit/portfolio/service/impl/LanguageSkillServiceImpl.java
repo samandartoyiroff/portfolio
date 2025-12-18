@@ -32,7 +32,14 @@ public class LanguageSkillServiceImpl implements LanguageSkillService {
     @Transactional
     public ResponseEntity<?> addLanguageSkill(LanguageSkillCreateDto languageSkillCreateDto, User user, Long cvId) {
 
-        CV cv = cVRepository.findByIdAndUserId(cvId, user.getId()).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        CV cv;
+
+        if (user != null) {
+            cv = cVRepository.findByIdAndUserId(cvId, user.getId()).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        }
+        else {
+            cv = cVRepository.findById(cvId).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        }
 
         LanguageSkill languageSkill = languageSkillMapper.toEntity(languageSkillCreateDto);
 
@@ -56,7 +63,14 @@ public class LanguageSkillServiceImpl implements LanguageSkillService {
     @Transactional
     public ResponseEntity<?> update(Long id, LanguageSkillUpdateDto languageSkillUpdateDto, User user, Long cvId) {
 
-        CV cv = cVRepository.findByIdAndUserId(cvId, user.getId()).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        CV cv;
+
+        if (user != null) {
+            cv = cVRepository.findByIdAndUserId(cvId, user.getId()).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        }
+        else {
+            cv = cVRepository.findById(cvId).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        }
 
         LanguageSkill languageSkill1 = cv.getLanguageSkills().stream().filter(languageSkill -> languageSkill.getId()
                 .equals(id)).findFirst().orElseThrow(() -> new RuntimeException("This language skill does not belong this user"));
@@ -82,7 +96,14 @@ public class LanguageSkillServiceImpl implements LanguageSkillService {
     @Transactional
     public ResponseEntity<?> removeLanguageSkill(Long id, User user, Long cvId) {
 
-        CV cv = cVRepository.findByIdAndUserId(cvId, user.getId()).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        CV cv;
+
+        if (user != null) {
+            cv = cVRepository.findByIdAndUserId(cvId, user.getId()).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        }
+        else {
+            cv = cVRepository.findById(cvId).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        }
 
         LanguageSkill languageSkill1 = cv.getLanguageSkills().stream().filter(languageSkill -> languageSkill.getId().equals(id)).findFirst()
                 .orElseThrow(() -> new RuntimeException("This language skill does not belong this user"));

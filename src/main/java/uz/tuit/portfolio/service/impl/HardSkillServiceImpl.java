@@ -92,13 +92,19 @@ public class HardSkillServiceImpl implements HardSkillService {
 
     @Override
     @Transactional
-    public ResponseEntity<HardSkillResponseDto> addHardSkill(Long hardSkillId, User user, Long cvId) {
+    public ResponseEntity<HardSkillResponseDto> addHardSkill(HardSkillCreateDto hardSkillCreateDto, User user, Long cvId) {
 
-        HardSkill hardSkill = hardSkillRepository.findById(hardSkillId)
-                .orElseThrow(() -> new RuntimeException("HardSkill not found"));
+        HardSkill hardSkill = hardSkillMapper.toEntity(hardSkillCreateDto);
+        hardSkillRepository.save(hardSkill);
 
-        CV cv = cvRepository.findByIdAndUserId(cvId, user.getId()).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        CV cv;
 
+        if (user != null) {
+            cv = cvRepository.findByIdAndUserId(cvId, user.getId()).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        }
+        else {
+            cv = cvRepository.findById(cvId).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        }
         List<HardSkill> hardSkills = cv.getHardSkills();
         if (hardSkills==null) {
             hardSkills = new ArrayList<>();
@@ -116,7 +122,14 @@ public class HardSkillServiceImpl implements HardSkillService {
     @Transactional
     public ResponseEntity<?> removeHardSkill(User user, Long id, Long cvId) {
 
-        CV cv = cvRepository.findByIdAndUserId(cvId, user.getId()).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        CV cv;
+
+        if (user != null) {
+            cv = cvRepository.findByIdAndUserId(cvId, user.getId()).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        }
+        else {
+            cv = cvRepository.findById(cvId).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        }
 
         hardSkillRepository.removeFromUserHardSkillTable(id, cv.getId());
 

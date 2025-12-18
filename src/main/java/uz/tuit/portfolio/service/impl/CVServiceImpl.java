@@ -16,6 +16,7 @@ import uz.tuit.portfolio.mapper.CVMapper;
 import uz.tuit.portfolio.repository.CVRepository;
 import uz.tuit.portfolio.service.CVService;
 import uz.tuit.portfolio.service.ImageService;
+import uz.tuit.portfolio.util.SecurityUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,7 +77,14 @@ public class CVServiceImpl implements CVService {
     @Transactional
     public ResponseEntity<?> removeHobby(String hobby, User user, Long cvId) {
 
-        CV cv = cVRepository.findByIdAndUserId(cvId, user.getId()).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        CV cv;
+
+        if (user != null) {
+            cv = cVRepository.findByIdAndUserId(cvId, user.getId()).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        }
+        else {
+            cv = cVRepository.findById(cvId).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        }
 
         cVRepository.removeHobby(cv.getId(), hobby);
 
@@ -86,9 +94,77 @@ public class CVServiceImpl implements CVService {
 
     @Override
     @Transactional
+    public ResponseEntity<?> deleteCv(Long cvId, User user) {
+
+        CV cv = cVRepository.findById(cvId).orElseThrow(() -> new EntityNotFoundException("cv not found"));
+        if (!cv.getUser().getId().equals(user.getId())) throw new EntityNotFoundException("this cv not belong to this user");
+
+        cVRepository.deleteById(cvId);
+        return ResponseEntity.ok("Deleted cv");
+    }
+
+
+
+    @Override
+    @Transactional
+    public ResponseEntity<CVResponseDto> createCvNonUser(CVCreateDto cvCreateDto, MultipartFile cvImage) {
+
+        CV cv = cVMapper.toEntity(cvCreateDto, cvImage);
+        cv.setUser(null);
+        cVRepository.save(cv);
+        return ResponseEntity.ok().body(cVMapper.toResponseDto(cv, null));
+
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<?> updateCVNonUser(CVUpdateDto cvUpdateDto, MultipartFile profilePhoto, Long cvId) {
+
+        CV cv = cVRepository.findById(cvId).orElseThrow(() -> new RuntimeException("CV Not Found"));
+
+        if (profilePhoto!=null) {
+            Image image = imageService.updateImage(profilePhoto, cv.getCvPhoto());
+            cv.setCvPhoto(image);
+        }
+
+        cv = cVMapper.updateCv(cvUpdateDto, cv);
+
+        cVRepository.save(cv);
+
+        return ResponseEntity.ok(cVMapper.toResponseDto(cv, null));
+
+    }
+
+    @Override
+    public ResponseEntity<CVResponseDto> findById(Long cvId) {
+
+        User user = SecurityUtil.gerCurrentUser();
+
+        CV cv;
+
+        if (user != null) {
+            cv = cVRepository.findByIdAndUserId(cvId, user.getId()).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        }
+        else {
+            cv = cVRepository.findById(cvId).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        }
+        return ResponseEntity.ok(cVMapper.toResponseDto(cv, user));
+
+
+    }
+
+    @Override
+    @Transactional
     public ResponseEntity<?> addHobby(String hobby, User user, Long cvId) {
 
-        CV cv = cVRepository.findByIdAndUserId(cvId, user.getId()).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        CV cv;
+
+        if (user != null) {
+            cv = cVRepository.findByIdAndUserId(cvId, user.getId()).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        }
+        else {
+            cv = cVRepository.findById(cvId).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        }
 
         if (cv.getHobbies() == null) {
             cv.setHobbies(new ArrayList<>());

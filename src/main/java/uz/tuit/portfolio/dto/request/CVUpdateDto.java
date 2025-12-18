@@ -7,6 +7,7 @@ import uz.tuit.portfolio.domain.Address;
 import uz.tuit.portfolio.domain.ContactInfo;
 import uz.tuit.portfolio.model.Gender;
 
+import java.util.Date;
 import java.util.List;
 
 @Setter
@@ -31,6 +32,10 @@ public class CVUpdateDto {
     private String driverLicense;
 
     private Gender gender;
+
+    private String template;
+
+    private Date dateOfBirth;
 
 
 }

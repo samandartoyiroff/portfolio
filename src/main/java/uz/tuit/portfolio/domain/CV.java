@@ -5,6 +5,7 @@
     import lombok.*;
     import uz.tuit.portfolio.model.Gender;
 
+    import java.util.Date;
     import java.util.List;
 
     @Setter
@@ -51,17 +52,14 @@
         @OneToMany(orphanRemoval = true, mappedBy = "cv", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
         private List<Experience> experiences;
 
-        @ManyToMany(fetch = FetchType.EAGER)
+        @OneToMany(fetch = FetchType.EAGER)
         private List<HardSkill> hardSkills; // max 30
 
-        @ManyToMany(fetch = FetchType.EAGER)
+        @OneToMany(fetch = FetchType.EAGER)
         private List<SoftSkill> softSkills;  // Max 10
 
         @OneToMany(mappedBy = "cv", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
         private List<Education> educations;
-
-        @ManyToMany(fetch = FetchType.EAGER)
-        private List<Technology> technologies; // Max 15
 
         @OneToMany(mappedBy = "cv", cascade = CascadeType.ALL,  fetch = FetchType.EAGER, orphanRemoval = true)
         private List<Certificate> certificates;
@@ -77,5 +75,9 @@
 
         @Enumerated(EnumType.STRING)
         private Gender gender;
+
+        private Date birthDate;
+
+        private String template;
 
     }

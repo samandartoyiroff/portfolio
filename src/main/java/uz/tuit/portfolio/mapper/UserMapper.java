@@ -8,12 +8,14 @@ import uz.tuit.portfolio.domain.User;
 import uz.tuit.portfolio.dto.request.UserUpdateDto;
 import uz.tuit.portfolio.dto.response.UserResponseDto;
 import uz.tuit.portfolio.model.Permission;
+import uz.tuit.portfolio.model.RoleName;
 import uz.tuit.portfolio.repository.UserRepository;
 import uz.tuit.portfolio.util.EmailValidator;
 import uz.tuit.portfolio.util.RoleUtil;
 import uz.tuit.portfolio.util.Validator;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
@@ -39,9 +41,9 @@ public class UserMapper {
         userResponseDto.setPhoneNumber(String.valueOf(user.getPhoneNumber()));
         userResponseDto.setStatus(user.getStatus());
         userResponseDto.setIsverified(user.isVerified());
-        userResponseDto.setRoles(
+        userResponseDto.setRole(
 
-                user.getRoles().stream().map(Role::getDescription).collect(Collectors.toSet())
+                getMainRole(user.getRoles())
 
         );
 
@@ -53,9 +55,25 @@ public class UserMapper {
                 user.getProfilePhoto()!=null ? user.getProfilePhoto().getPath() : null
         );
 
-
+        userResponseDto.setFreeCvCount(user.getFreeCvCount());
+        userResponseDto.setPortfolioId(user.getPortfolio()!=null ? user.getPortfolio().getId() : null);
+        userResponseDto.setGender(user.getGender());
 
         return userResponseDto;
+    }
+
+    private String getMainRole(Set<Role> roles) {
+
+
+        for (Role role : roles) {
+
+            if (role.getName().equals(RoleName.ROLE_SUPERADMIN)) return role.getName().name();
+            else if (role.getName().equals(RoleName.ROLE_ADMIN) && roles.size()==2) return role.getName().name();
+            else if (role.getName().equals(RoleName.ROLE_USER) && roles.size()==1) return role.getName().name();
+
+        }
+        return null;
+
     }
 
     public List<UserResponseDto> listDto(List<User> users) {

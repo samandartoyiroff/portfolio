@@ -3,6 +3,7 @@ package uz.tuit.portfolio.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import uz.tuit.portfolio.model.HardSkillDegree;
 
 @Entity
 @Getter
@@ -16,8 +17,11 @@ public class HardSkill extends Auditable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String name;
+
+    @Enumerated(EnumType.STRING)
+    private HardSkillDegree degree;
 
 
 }

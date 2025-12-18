@@ -19,7 +19,7 @@ public interface HardSkillService {
 
     ResponseEntity<HardSkillResponseDto> findById(Long id);
 
-    ResponseEntity<HardSkillResponseDto> addHardSkill(Long hardSkillId, User user, Long cvId);
+    ResponseEntity<HardSkillResponseDto> addHardSkill(HardSkillCreateDto hardSkillId, User user, Long cvId);
 
     ResponseEntity<?> removeHardSkill(User user, Long id, Long cvId);
 

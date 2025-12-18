@@ -103,39 +103,6 @@ public class TechnologyServiceImpl implements TechnologyService {
 
     @Override
     @Transactional
-    public ResponseEntity<TechnologyResponseDto> addTechnology(Long technologyId, User user, Long cvId) {
-
-        CV cv = cVRepository.findByIdAndUserId(cvId, user.getId()).orElseThrow(()-> new EntityNotFoundException("cv not found"));
-
-        List<Technology> technologies = cv.getTechnologies();
-
-        Technology technology = technologyRepository.findById(technologyId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Technology not found"));
-
-        technologies.add(technology);
-
-        cv.setTechnologies(technologies);
-
-        cVRepository.save(cv);
-
-        return ResponseEntity.ok().body(technologyMapper.toResponseDto(technology));
-
-    }
-
-    @Override
-    @Transactional
-    public ResponseEntity<?> removeTechnology(Long id, User user, Long cvId) {
-
-        CV cv = cVRepository.findByIdAndUserId(cvId, user.getId()).orElseThrow(()-> new EntityNotFoundException("cv not found"));
-
-
-        technologyRepository.deleteByCvIdAndTechnologyId(cv.getId(), id);
-        return ResponseEntity.ok().body("Technology has been removed");
-
-    }
-
-    @Override
-    @Transactional
     public ResponseEntity<TechnologyResponseDto> addTechnologyInPortfolio(Long technologyId, User user) {
 
         Portfolio portfolio = user.getPortfolio();

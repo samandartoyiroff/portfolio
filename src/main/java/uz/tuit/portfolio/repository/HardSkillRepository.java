@@ -48,8 +48,8 @@ public interface HardSkillRepository extends JpaRepository<HardSkill, Long> {
 
     @Modifying
     @Query(nativeQuery = true, value = """
-        delete from portfolio_hard_skills hs where hs.portfolio_id =:portfolioId and hs.cv_id =:cvId
+        delete from portfolio_hard_skills hs where hs.portfolio_id =:portfolioId and hs.hard_skills_id =:hardSkillId
                                \s""")
-    void removeFromUserHardSkillTableInPortfolio(Long cvId, Long portfolioId);
+    void removeFromUserHardSkillTableInPortfolio(Long hardSkillId, Long portfolioId);
 
 }

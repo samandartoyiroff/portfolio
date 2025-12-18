@@ -28,5 +28,6 @@ public class PortfolioUpdateDto {
 
     private Gender gender;
 
+    private String template;
 
 }

@@ -16,7 +16,7 @@ import uz.tuit.portfolio.service.HardSkillService;
 public class HardSkillController {
 
     private final HardSkillService  hardSkillService;
-
+/*
     @GetMapping("/search")
     public ResponseEntity<?> search(
             @RequestParam(name = "query", required = false) String query
@@ -54,6 +54,6 @@ public class HardSkillController {
             @PathVariable Long id
     ){
         return hardSkillService.findById(id);
-    }
+    }*/
 
 }
