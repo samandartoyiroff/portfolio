@@ -17,6 +17,6 @@ public interface UserService {
 
     ResponseEntity<UserResponseDto> updateUser(Long userId, UserUpdateDto userUpdateDto, User user);
 
-    ResponseEntity<UserResponseDto> updateMe(User user, @Valid UserUpdateMeDto userUpdateDto, MultipartFile profilePhoto);
+    ResponseEntity<UserResponseDto> updateMe(User user, @Valid UserUpdateMeDto userUpdateDto, MultipartFile profilePhoto, MultipartFile backroundPhoto);
 
 }

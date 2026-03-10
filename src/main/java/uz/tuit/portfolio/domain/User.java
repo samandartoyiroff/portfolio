@@ -46,6 +46,9 @@ public class User extends Auditable implements UserDetails {
     @OneToOne(cascade = CascadeType.ALL)
     private Image profilePhoto;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    private Image backroundPhoto;
+
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<Role> roles;
 

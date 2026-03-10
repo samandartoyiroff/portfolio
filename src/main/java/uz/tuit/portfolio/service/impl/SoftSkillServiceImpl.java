@@ -120,13 +120,27 @@ public class SoftSkillServiceImpl implements SoftSkillService {
     @Transactional
     public ResponseEntity<?> removeSoftSkill(Long softSkillId, User user, Long cvId) {
 
-        CV cv = cVRepository.findByIdAndUserId(cvId, user.getId()).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        CV cv;
 
+        if (user != null) {
+            cv = cVRepository.findByIdAndUserId(cvId, user.getId()).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        }
+        else {
+            cv = cVRepository.findById(cvId).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+        }
+
+        // 1. CV entitydan olib tashlash
+        cv.getSoftSkills().removeIf(s -> s.getId().equals(softSkillId));
+
+        // 2. Join relationshipni o‘chirish
         softSkillRepository.deleteBySoftSkillIdAndCvId(softSkillId, cv.getId());
 
-        return ResponseEntity.ok().build();
+        // 3. SoftSkillni o‘chirib tashlash
+        softSkillRepository.deleteById(softSkillId);
 
+        return ResponseEntity.ok().build();
     }
+
 
     @Override
     @Transactional

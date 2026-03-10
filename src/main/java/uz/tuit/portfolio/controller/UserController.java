@@ -55,9 +55,10 @@ public class UserController {
     public ResponseEntity<UserResponseDto> updateUser(
             @AuthenticationPrincipal User user,
             @RequestPart @Valid UserUpdateMeDto userUpdateDto,
-            @RequestPart(required = false) MultipartFile profilePhoto
+            @RequestPart(required = false) MultipartFile profilePhoto,
+            @RequestPart(required = false) MultipartFile backroundPhoto
     ){
-        return userService.updateMe(user, userUpdateDto, profilePhoto);
+        return userService.updateMe(user, userUpdateDto, profilePhoto, backroundPhoto);
     }
 
 }

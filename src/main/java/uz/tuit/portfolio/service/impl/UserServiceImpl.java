@@ -73,7 +73,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public ResponseEntity<UserResponseDto> updateMe(User user, UserUpdateMeDto userUpdateDto, MultipartFile profilePhoto) {
+    public ResponseEntity<UserResponseDto> updateMe(User user, UserUpdateMeDto userUpdateDto, MultipartFile profilePhoto, MultipartFile backroundPhoto) {
 
 
         if (profilePhoto!=null){
@@ -85,6 +85,18 @@ public class UserServiceImpl implements UserService {
                 Image image = imageService.uploadImage(profilePhoto);
                 user.setProfilePhoto(image);
             }
+        }
+
+        if (backroundPhoto!=null){
+
+            if (user.getBackroundPhoto()!=null){
+                user.setProfilePhoto(imageService.updateImage(backroundPhoto, user.getBackroundPhoto()));
+            }
+            else {
+                Image image = imageService.uploadImage(backroundPhoto);
+                user.setBackroundPhoto(image);
+            }
+
         }
 
         if (userUpdateDto.getUsername()!=null && !userUpdateDto.getUsername().isBlank() && !userUpdateDto.getUsername().equals(user.getUsername())) {

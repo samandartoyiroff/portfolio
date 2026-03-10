@@ -125,17 +125,25 @@ public class HardSkillServiceImpl implements HardSkillService {
         CV cv;
 
         if (user != null) {
-            cv = cvRepository.findByIdAndUserId(cvId, user.getId()).orElseThrow(()-> new EntityNotFoundException("cv not found"));
-        }
-        else {
-            cv = cvRepository.findById(cvId).orElseThrow(()-> new EntityNotFoundException("cv not found"));
+            cv = cvRepository.findByIdAndUserId(cvId, user.getId())
+                    .orElseThrow(() -> new EntityNotFoundException("cv not found"));
+        } else {
+            cv = cvRepository.findById(cvId)
+                    .orElseThrow(() -> new EntityNotFoundException("cv not found"));
         }
 
+        // 1. CV dan ham unlink qilish
+        cv.getHardSkills().removeIf(h -> h.getId().equals(id));
+
+        // 2. Join jadvaldan o‘chirish
         hardSkillRepository.removeFromUserHardSkillTable(id, cv.getId());
 
-        return ResponseEntity.ok("HardSkill has been removed");
+        // 3. HardSkill ni bazadan o‘chirish
+        hardSkillRepository.deleteById(id);
 
+        return ResponseEntity.ok("HardSkill has been removed");
     }
+
 
     @Override
     public ResponseEntity<HardSkillResponseDto> addHardSkillToPortfolio(Long hardSkillId, User user) {

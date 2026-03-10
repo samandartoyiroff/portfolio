@@ -29,4 +29,15 @@ public class LanguageServiceImpl implements LanguageService {
 
         return ResponseEntity.ok(languagesList);
     }
+
+    @Override
+    public ResponseEntity<?> findAll() {
+
+        List<Language> languages = languageRepository.findAll();
+
+        List<LanguageResponseDto> list = languages.stream().map(language -> languageMapper.languageToLanguageDto(language)).toList();
+
+        return ResponseEntity.ok(list);
+
+    }
 }

@@ -1,15 +1,15 @@
 
 server:
-  port: 8081
+  port: 8080
 
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/portfolio
     username: postgres
-    password: 123456
+    password: stark0777
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
 
     show-sql: true
     open-in-view: false

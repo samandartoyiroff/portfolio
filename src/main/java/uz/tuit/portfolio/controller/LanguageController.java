@@ -23,4 +23,9 @@ public class LanguageController {
         return languageService.search(query);
     }
 
+    @GetMapping("/find-all")
+    public ResponseEntity<?> findAll(){
+        return languageService.findAll();
+    }
+
 }

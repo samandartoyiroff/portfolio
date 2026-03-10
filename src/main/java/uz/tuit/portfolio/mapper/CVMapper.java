@@ -150,7 +150,7 @@ public class CVMapper {
 
         cv.setContactInfo(cvCreateDto.getContactInfo());
 
-        cv.setOccupation(cvCreateDto.getOccupationName());
+        cv.setOccupation(cvCreateDto.getOccupation());
 
         List<ExperienceCreateDto> experience = cvCreateDto.getExperience();
         if (experience != null && !experience.isEmpty()) {

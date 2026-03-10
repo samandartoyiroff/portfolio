@@ -18,7 +18,7 @@ import java.util.List;
 @ToString
 public class CVCreateDto {
 
-    private String occupationName;
+    private String occupation;
 
     private String fullName;
 
